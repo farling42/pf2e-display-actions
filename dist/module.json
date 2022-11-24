@@ -1,8 +1,12 @@
 {
     "$schema": "https://json.schemastore.org/foundryvtt-manifest.json",
-    "name": "foundry-module-ts-template-main",
-    "title": "New Module",
-    "description": "A template module using Typescript. You should change name, title, and description in module.json.",
+    "name": "pf2e-display-actions",
+    "author": {
+        "GitHub": "MoonIsFalling",
+        "Discord": "Thieftain#0744"
+    },
+    "title": "Pf2e Display Actions",
+    "description": "A small module to display the pathfinder action economy for convinience.",
     "version": "1.0.0",
     "packs": [],
     "system": [],
