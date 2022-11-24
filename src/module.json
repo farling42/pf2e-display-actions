@@ -1,56 +1,25 @@
 {
-  "name": "pf2e_display_actions",
-  "title": "Pf2e display actions",
-  "description": "A small Application to display an playwith the Pf2e actions", 
-  "authors": [
-    {
-      "name": "MoonIsFalling",
-      "discord": "Thieftain#6256"
-    }
-  ],
-  "version": "0.0.2",
-  "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.7.9",
-  "manifestPlusVersion": "1.0.0",
-  "url": "https://github.com/MoonIsFalling/pf2e-display-actions",
-  "manifest": "https://github.com/MoonIsFalling/pf2e-display-actions/releases/latest/download/module.json",
-  "download": "https://github.com/MoonIsFalling/pf2e-display-actions/releases/latest/download/module.zip",
-  "type": "module",
-  "includes": [
-    "./assets/**",
-    "./lang/**",
-    "./scripts/**",
-    "./styles/**",
-    "./templates/**",
-    "./module.json",
-    "./README.md",
-    "./images/**"
-  ],
-  "media": [
-    {
-      "type": "icon",
-      "location": ""
-    }, 
-    {
-      "type": "cover",
-      "location": ""
-    },
-    {
-      "type": "screenshot",
-      "location": ""
-    }
-  ],
-  "esmodules": [
-    "scripts/module.js"
-  ],
-  "styles": [
-    "styles/module.css"
-  ],
+  "$schema": "https://json.schemastore.org/foundryvtt-manifest.json",
+  "name": "foundry-module-ts-template-main",
+  "title": "New Module",
+  "description": "A template module using Typescript. You should change name, title, and description in module.json.",
+  "version": "1.0.0",
+  "packs": [],
+  "system": [],
+  "dependencies": [],
+  "scripts": [],
+  "compatibility": {
+    "minimum": "9",
+    "verified": "10",
+    "maximum": "10"
+  },
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "languages/en.json"
     }
-  ]
+  ],
+  "styles": ["style.css"],
+  "esmodules": ["scripts/module.js"]
 }

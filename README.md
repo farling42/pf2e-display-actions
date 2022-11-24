@@ -1,47 +1,22 @@
-![](https://img.shields.io/badge/Foundry-v0.7.9-informational)
-<!--- Downloads @ Latest Badge -->
-<!--- replace <user>/<repo> with your username/repository -->
-<!--- ![Latest Release Download Count](https://img.shields.io/github/downloads/<user>/<repo>/latest/module.zip) -->
+# FoundryVTT Module Template w/ Typescript
 
-<!--- Forge Bazaar Install % Badge -->
-<!--- replace <your-module-name> with the `name` in your manifest -->
-<!--- ![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2F<your-module-name>&colorB=4aa94a) -->
+This repo is meant to be used as a starting point for creating your own FoundryVTT module with [Typescript][2]. If you are using Github you can get started by clicking the green `Use this template` button in the upper-right.
 
-# Changelog
-*Please for the love of all that you hold dear, do everyone a favor and include a changelog here rather than making people guess at the capabilities of your module since last release*
+Check out [our blog post][4] for a walkthrough of the codebase.
 
-# Description
-This is a typescript template to get you started. This is not intended for beginners.
+## What's in the box
 
-Please use the javascript template as necessary for your stuff.
+Out of the box this template adds a button to the top of the Actors directory. Clicking it brings up a modal with a button that will load a picture of a random dog from the [Dog API][3]. This demonstrates how to perform some common tasks such as render templates and call external APIs, and hopefully provides a decent starting point for developing your own module.
 
+## Todo
 
-## Manifest Plus
-Adds the following fields to the manifest for package browsers to pick up and show information better:
+If you have just created a new project with this template there are a few changes you should make to start:
 
-```
-- includes: [] # list of files to include in the zip
-- icon: "" # link to icon img
-- cover: "" #link to cover img
-- screenshots: [] #links to screenshot images
-- video: ""
-- authors: [
-  {
-    "name": "name",
-    "email": "email",
-    "discord": "discord"
-  }
-]
-
-```
+- [ ] Update the values in `src/module.json`. At minimum you should change `id`, `title`, and `description`. It is also recommended that you add a `contacts` field.
+- [ ] Start using a new module prefix for localizations. The localizations in `src/languages/en.json` are all prefixed with `MYMODULE.` to distinguish them from any other installed translations. You should choose a new prefix for your module and use it for any new translations you add, and remove the existing translation entries as they become unnecessary.
 
 
-## Versioned Releases
-
-The Github Actions script will automatically create a Latest release which will always have a module.json that points to the latest release, and a versioned release whenever you update the version in your module.json. 
-
-This allows people who depend on a specific version of your module to just install that and be version locked. The versioned releases will *not* auto update. 
-
-
-# License
-MIT License. Do what you will. PRs welcome. 
+[1]: https://foundryvtt.com/
+[2]: https://www.typescriptlang.org/
+[3]: https://dog.ceo/dog-api/
+[4]: https://bringingfire.com/blog/intro-to-foundry-module-development

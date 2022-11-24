@@ -3,6 +3,7 @@
     max-width: 100px;
     min-height: 10px;
     max-height: 100px;
+    border: none;
 }
 
 .symbolClick {
@@ -11,10 +12,13 @@
 
 .input-counter {
     width: 25px;
+    column-gap: 5px;
 }
 
 .counter {
     grid-area: "counter";
+    display: flex;
+    height: fit-content;
 }
 
 .actions {
@@ -36,4 +40,10 @@
     grid-template-areas: 
     "counter"
     "flexbox-actions";
+    height: fit-content;
+}
+
+.main {
+    width: auto;
+    height: auto;
 }
