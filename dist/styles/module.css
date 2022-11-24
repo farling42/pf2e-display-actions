@@ -1,0 +1,39 @@
+.symbol {
+    min-width: 10px;
+    max-width: 100px;
+    min-height: 10px;
+    max-height: 100px;
+}
+
+.symbolClick {
+    opacity: 0.5;
+}
+
+.input-counter {
+    width: 25px;
+}
+
+.counter {
+    grid-area: "counter";
+}
+
+.actions {
+    grid-area: "actions";
+}
+
+.reactions {
+    grid-area: "reactions";
+}
+
+.flexbox-actions {
+    display: flex;
+    grid-area: "flex-actions";
+}
+
+.wrapper {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-areas: 
+    "counter"
+    "flexbox-actions";
+}

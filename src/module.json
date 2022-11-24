@@ -1,11 +1,11 @@
 {
-  "name": "foundry-typescript-template",
-  "title": "Typescript Template",
+  "name": "pf2e-display-actions",
+  "title": "Pf2e display actions",
   "description": "", 
   "authors": [
     {
-      "name": "spacemandev",
-      "discord": "spacemandev#6256"
+      "name": "MoonIsFalling",
+      "discord": "Thieftain#6256"
     }
   ],
   "version": "0.0.1",
