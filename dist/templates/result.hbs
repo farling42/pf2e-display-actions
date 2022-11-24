@@ -1,0 +1,20 @@
+<section class="main wrapper">
+    <section class="counter">
+        <label for="num-action">Actions: </label>
+        <input class="input-counter" id="count-action" name="num-action" type="number" value="{{this.numOfActions}}">
+        <label for="num-reaction">Reactions: </label>
+        <input class="input-counter" id="count-reaction" name="num-reaction" type="number" value="{{this.numOfReactions}}">
+    </section>
+    <section class="flexbox-actions">
+        <section class="actions">
+            {{#each this.actionImagePayload}}
+            <img class="symbol" src="{{this.actionImage}}">
+            {{/each}}
+        </section>
+        <section class="reactions">
+            {{#each this.reactionImagePayload}}
+            <img class="symbol" src="{{this.reactionImage}}">
+            {{/each}}
+        </section>
+    </section>
+</section>

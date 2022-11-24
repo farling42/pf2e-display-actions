@@ -1,0 +1,49 @@
+.symbol {
+  min-width: 10px;
+  max-width: 100px;
+  min-height: 10px;
+  max-height: 100px;
+  border: none;
+}
+
+.symbolClick {
+  opacity: 0.5;
+}
+
+.input-counter {
+  width: 25px;
+  column-gap: 5px;
+}
+
+.counter {
+  grid-area: "counter";
+  display: flex;
+  height: fit-content;
+}
+
+.actions {
+  grid-area: "actions";
+}
+
+.reactions {
+  grid-area: "reactions";
+}
+
+.flexbox-actions {
+  display: flex;
+  grid-area: "flex-actions";
+}
+
+.wrapper {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-areas: "counter" "flexbox-actions";
+  height: fit-content;
+}
+
+.main {
+  width: auto;
+  height: auto;
+}
+
+/*# sourceMappingURL=style.css.map */
