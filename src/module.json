@@ -7,14 +7,14 @@
   },
   "title": "Pf2e Display Actions",
   "description": "A small module to display the pathfinder action economy for convinience.",
-  "version": "0.3.0",
+  "version": "1.0.1",
   "packs": [],
-  "system": [],
+  "system": ["pf2e"],
   "dependencies": [],
   "scripts": [],
   "compatibility": {
     "minimum": "9",
-    "verified": "10",
+    "verified": "9",
     "maximum": "10"
   },
   "languages": [
