@@ -1,10 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/foundryvtt-manifest.json",
     "name": "pf2e-display-actions",
-    "author": {
-        "name": "MoonIsFalling",
-        "discord": "Thieftain#0744"
-    },
+    "author": "MoonIsFalling",
     "title": "Pf2e Display Actions",
     "description": "A small module to display the pathfinder action economy for convinience.",
     "version": "1.0.0",
@@ -14,7 +11,7 @@
     "scripts": [],
     "compatibility": {
         "minimum": "9",
-        "verified": "10",
+        "verified": "9",
         "maximum": "10"
     },
     "languages": [
