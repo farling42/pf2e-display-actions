@@ -5,5 +5,4 @@ package-lock.json
 *.lock
 Source/packs/
 Source/generators/
-dist
 foundryconfig.json
