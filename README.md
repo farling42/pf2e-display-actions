@@ -13,3 +13,6 @@ This should get you your action display ![action display dialog](dialog.png)
 - make the amount of actions and reactions based on the selected token
 - beautify the Dialog
 - find a icon for the sidebar
+
+## Credits
+- I used BringingFire's [Blog](https://bringingfire.com/blog/intro-to-foundry-module-development) and respective [template](https://github.com/BringingFire/foundry-module-ts-template)
