@@ -37,8 +37,6 @@ Hooks.once('init', () => {
 });
 
 Hooks.on('getSceneControlButtons', hudButtons => {
-  console.log('peter');
-  console.log(hudButtons);
   let hud = hudButtons.find(value => {
     return value.name === 'token';
   });
@@ -46,7 +44,7 @@ Hooks.on('getSceneControlButtons', hudButtons => {
   hud?.tools.push({
     name: 'DisplayActions2e.ButtonName',
     title: 'DisplayActions2e.ButtonHint',
-    icon: (game as Game).i18n.localize('DisplayActions2e.ButtonIcon'),
+    icon: 'fa fa-angle-double-right',
     button: true,
     onClick: async () => {
       module.displayActions2e.render(true);

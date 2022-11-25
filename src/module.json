@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/foundryvtt-manifest.json",
   "name": "pf2e-display-actions",
   "author": {
-    "GitHub": "MoonIsFalling",
+    "name": "MoonIsFalling",
     "Discord": "Thieftain#0744"
   },
   "title": "Pf2e Display Actions",
@@ -25,5 +25,18 @@
     }
   ],
   "styles": ["style.css"],
-  "esmodules": ["scripts/module.js"]
+  "esmodules": ["scripts/module.js"],
+  "url": "https://github.com/MoonIsFalling/pf2e-display-actions",
+  "manifest": "https://github.com/MoonIsFalling/pf2e-display-actions/releases/latest/download/module.json",
+  "download": "https://github.com/MoonIsFalling/pf2e-display-actions/releases/latest/download/module.zip",
+  "includes": [
+      "./images/**",
+      "./languages/**",
+      "./scripts/**",
+      "./templates/**",
+      "./module.json",
+      "./README.md",
+      "./*.css",
+      "./*.css.map"
+  ]
 }

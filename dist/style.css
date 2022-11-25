@@ -46,4 +46,9 @@
   height: auto;
 }
 
+@font-face {
+  font-family: "pf2-actions";
+  src: url("/Data/systems/pf2e/fonts/Pathfinder2eActions.ttf");
+}
+
 /*# sourceMappingURL=style.css.map */

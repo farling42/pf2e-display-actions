@@ -3,5 +3,5 @@
   "DisplayActions2e.htmlPath": "../templates/result.html",
   "DisplayActions2e.ButtonName": "Pf2eActions",
   "DisplayActions2e.ButtonHint": "Display Actions",
-  "DisplayActions2e.ButtonIcon": "../images/action.png"
+  "DisplayActions2e.ButtonIcon": "pf2-actions a"
 }
