@@ -2,8 +2,8 @@ import {moduleId} from '../constants';
 
 export class DisplayActions2e extends Application {
   private clickString = 'symbolClick';
-  private actionImage = `modules/${moduleId}/images/action.png`;
-  private reactionImage = `modules/${moduleId}/images/reaction.png`;
+  private actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
+  private reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
   private numOfActions = 3;
   private numOfReactions = 1;
 
