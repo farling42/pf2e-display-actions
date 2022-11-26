@@ -67,8 +67,11 @@ export class DisplayActions2e extends Application {
 
   override activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
-    html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
-    html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
+    // only register events for oneself
+    if (String((game as Game).user?.name) === this.state.sentFromName) {
+      html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
+      html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
+    }
   }
 
   private _onClickSymbolImage(event: Event) {
