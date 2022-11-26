@@ -8,12 +8,12 @@
     <section class="flexbox-actions">
         <section class="actions">
             {{#each this.actionImagePayload}}
-            <img class="symbol" src="{{this.actionImage}}">
+            <img class="{{this.cssClass}}" src="{{this.actionImage}}" id="a{{this.number}}">
             {{/each}}
         </section>
         <section class="reactions">
             {{#each this.reactionImagePayload}}
-            <img class="symbol" src="{{this.reactionImage}}">
+            <img class="{{this.cssClass}}" src="{{this.reactionImage}}" id="r{{this.number}}">
             {{/each}}
         </section>
     </section>
