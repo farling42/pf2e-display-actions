@@ -7,7 +7,7 @@
   },
   "title": "Pf2e Display Actions",
   "description": "A small module to display the pathfinder action economy for convinience.",
-  "version": "1.0.1",
+  "version": "1.3.0",
   "packs": [],
   "system": ["pf2e"],
   "dependencies": [],
@@ -38,5 +38,6 @@
       "./README.md",
       "./*.css",
       "./*.css.map"
-  ]
+  ],
+  "socket": true
 }

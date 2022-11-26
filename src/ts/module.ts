@@ -2,39 +2,17 @@
 // code and not include them in the build output.
 import '../styles/module.css';
 import {DisplayActions2e} from './apps/displayActions';
+import {moduleId, socketEvent} from './constants';
+import {EmitData, MyModule} from './types';
+import './socket';
+import {handleShowToAll} from './socket';
 import {SelectiveShowApp} from './apps/selectiveShow';
-import {moduleId} from './constants';
-import {MyModule} from './types';
 
 let module: MyModule;
-
-// Handlebar helper
-// times iterator --> for loop
-
-Handlebars.registerHelper('times', function (n, block) {
-  let accum = '';
-
-  for (let i = 0; i < n; ++i) {
-    accum += block.fn(i);
-  }
-  return accum;
-});
-
-Handlebars.registerHelper('timesImages', function (n, options: Handlebars.HelperOptions) {
-  let accum = '';
-
-  for (let i = 0; i < n; ++i) {
-    accum += options.fn(i, options.data);
-  }
-  return accum;
-});
 
 // Foundry Hooks
 Hooks.once('init', () => {
   console.log(`Initializing ${moduleId}`);
-
-  module = (game as Game).modules.get(moduleId) as MyModule;
-  module.displayActions2e = new DisplayActions2e();
 });
 
 Hooks.on('getSceneControlButtons', hudButtons => {
@@ -70,5 +48,22 @@ Hooks.on('getSceneControlButtons', hudButtons => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (selection.includes((game as Game).user?.id)) Journal._showEntry(id, mode, force);
+  });
+});
+
+Hooks.on('ready', () => {
+  module = (game as Game).modules.get(moduleId) as MyModule;
+  module.displayActions2e = new DisplayActions2e();
+  // sockets
+  (game as Game).socket?.on(socketEvent, (data: EmitData) => {
+    // all my events
+    switch (data.operation) {
+      case 'showToAll':
+        handleShowToAll(data);
+        break;
+      default:
+        console.log(data);
+        break;
+    }
   });
 });
