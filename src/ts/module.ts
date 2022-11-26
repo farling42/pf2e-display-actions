@@ -12,8 +12,6 @@ let module: MyModule;
 // Foundry Hooks
 Hooks.once('init', () => {
   console.log(`Initializing ${moduleId}`);
-  module = (game as Game).modules.get(moduleId) as MyModule;
-  module.displayActions2e = new DisplayActions2e();
 });
 
 Hooks.on('getSceneControlButtons', hudButtons => {
@@ -34,6 +32,8 @@ Hooks.on('getSceneControlButtons', hudButtons => {
 });
 
 Hooks.on('ready', () => {
+  module = (game as Game).modules.get(moduleId) as MyModule;
+  module.displayActions2e = new DisplayActions2e();
   // sockets
   (game as Game).socket?.on(socketEvent, (data: EmitData) => {
     // all my events

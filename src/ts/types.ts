@@ -16,4 +16,5 @@ export interface DisplayActions2eData {
   numOfReactions: number;
   classNameListActions: string[];
   classNameListReactions: string[];
+  sentFromName: string;
 }

@@ -3,5 +3,5 @@ import {EmitData} from './types';
 
 export function handleShowToAll(data: EmitData) {
   const dialog = new DisplayActions2e(data.state);
-  dialog.render(true);
+  dialog.render(true, {id: `DisplayActions2e${data.user}`});
 }

@@ -13,6 +13,7 @@ export class DisplayActions2e extends Application {
     numOfReactions: this.defaultNumOfReactions,
     classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
+    sentFromName: String((game as Game).user?.name),
   };
 
   constructor(newState?: DisplayActions2eData) {
@@ -24,7 +25,11 @@ export class DisplayActions2e extends Application {
   }
 
   override get title(): string {
-    return (game as Game).i18n.localize('DisplayActions2e.WindowTitle');
+    let title = (game as Game).i18n.localize('DisplayActions2e.WindowTitle');
+    if (this.state.sentFromName === (game as Game).user?.name) {
+      return title;
+    }
+    return title.concat(' sent from ', this.state.sentFromName);
   }
 
   static override get defaultOptions(): ApplicationOptions {
