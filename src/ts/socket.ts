@@ -1,11 +1,7 @@
-import {moduleId} from './constants';
-import {EmitData, MyModule} from './types';
+import {DisplayActions2e} from './apps/displayActions';
+import {EmitData} from './types';
 
 export function handleShowToAll(data: EmitData) {
-  console.log(data);
-}
-
-export function handleSocketlib() {
-  const module = (game as Game).modules.get(moduleId) as MyModule;
-  module.displayActions2e.render(true);
+  const dialog = new DisplayActions2e(data.state);
+  dialog.render(true);
 }

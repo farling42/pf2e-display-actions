@@ -8,8 +8,7 @@ export interface MyModule extends Game.ModuleData<ModuleData> {
 export interface EmitData {
   operation: String;
   user: String;
-  displayApp: DisplayActions2e;
-  html: any;
+  state: DisplayActions2eData;
 }
 
 export interface DisplayActions2eData {

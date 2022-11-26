@@ -7,7 +7,6 @@ export class DisplayActions2e extends Application {
   private reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
   private numOfActions = 3;
   private numOfReactions = 1;
-  private socketlib: any;
 
   private state: DisplayActions2eData = {
     numOfActions: this.numOfActions,
@@ -16,8 +15,12 @@ export class DisplayActions2e extends Application {
     classNameListReactions: Array.from({length: this.numOfReactions}, () => 'symbol'),
   };
 
-  constructor() {
+  constructor(newState?: DisplayActions2eData) {
     super();
+
+    if (newState) {
+      this.state = newState;
+    }
   }
 
   override get title(): string {
@@ -141,16 +144,9 @@ export class DisplayActions2e extends Application {
     event.preventDefault();
     (game as Game).socket?.emit(socketEvent, {
       operation: 'showToAll',
-      displayApp: this,
+      state: this.state,
       user: (game as Game).userId,
-      html: this.render,
     } as EmitData);
-    // this.socketlib.executeForEveryone(this.render(), (game as Game).user?.name);
-    this.socketlib.executeForEveryone('showToAll', (game as Game).user?.name);
-  }
-
-  setSocketlib(socketlib: any) {
-    this.socketlib = socketlib;
   }
 
   /**
