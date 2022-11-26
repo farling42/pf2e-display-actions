@@ -1,5 +1,6 @@
-import {moduleId, socketEvent} from '../constants';
-import {DisplayActions2eData, EmitData} from '../types';
+import {moduleId} from '../constants';
+import {DisplayActions2eData} from '../types';
+import {SelectiveShowApp} from './selectiveShow';
 
 export class DisplayActions2e extends Application {
   private clickString = 'symbolClick';
@@ -15,6 +16,8 @@ export class DisplayActions2e extends Application {
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
     sentFromName: String((game as Game).user?.name),
   };
+
+  private showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String((game as Game).user?.name)], this.state);
 
   constructor(newState?: DisplayActions2eData) {
     super();
@@ -138,20 +141,11 @@ export class DisplayActions2e extends Application {
       label: 'JOURNAL.ActionShow',
       class: 'share-image',
       icon: 'fas fa-eye',
-      onclick: event => this._onShowPlayers(event),
+      onclick: () => this.showPlayerHandler._handleShowPlayers(this.state),
     };
 
     buttons.unshift(headerButton);
     return buttons;
-  }
-
-  private _onShowPlayers(event: JQuery.ClickEvent<any, any, any, any>) {
-    event.preventDefault();
-    (game as Game).socket?.emit(socketEvent, {
-      operation: 'showToAll',
-      state: this.state,
-      user: (game as Game).userId,
-    } as EmitData);
   }
 
   /**

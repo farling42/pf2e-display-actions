@@ -9,6 +9,7 @@ export interface EmitData {
   operation: String;
   user: String;
   state: DisplayActions2eData;
+  userList?: String[];
 }
 
 export interface DisplayActions2eData {

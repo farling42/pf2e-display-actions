@@ -5,8 +5,7 @@ import {DisplayActions2e} from './apps/displayActions';
 import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import './socket';
-import {handleShowToAll} from './socket';
-import {SelectiveShowApp} from './apps/selectiveShow';
+import {handleShowToAll, handleShowToSelection} from './socket';
 
 let module: MyModule;
 
@@ -30,25 +29,6 @@ Hooks.on('getSceneControlButtons', hudButtons => {
       (game as Game).socket?.emit('module.DisplayActions2e', {event: 'DisplayActions2e'});
     },
   });
-
-  // 👇️ ts-ignore ignores any ts errors on the next line
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  JournalEntry.prototype.show = async function (mode = 'text', force = false) {
-    if (!this.isOwner) throw new Error((game as Game).i18n.localize('selectiveshow.MustBeAnOwnerError'));
-    let selection = await new Promise(resolve => {
-      new SelectiveShowApp(resolve).render(true);
-    });
-
-    (game as Game).socket?.emit('module.DisplayActions2e', {id: this.uuid, mode, force, selection});
-  };
-
-  (game as Game).socket?.on('module.DisplayActions2e', ({id, mode, force, selection}) => {
-    // 👇️ ts-ignore ignores any ts errors on the next line
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (selection.includes((game as Game).user?.id)) Journal._showEntry(id, mode, force);
-  });
 });
 
 Hooks.on('ready', () => {
@@ -61,6 +41,8 @@ Hooks.on('ready', () => {
       case 'showToAll':
         handleShowToAll(data);
         break;
+      case 'showToSelection':
+        handleShowToSelection(data);
       default:
         console.log(data);
         break;
