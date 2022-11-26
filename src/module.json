@@ -38,5 +38,6 @@
       "./README.md",
       "./*.css",
       "./*.css.map"
-  ]
+  ],
+  "socket": true
 }

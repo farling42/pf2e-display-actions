@@ -4,3 +4,17 @@ import {DisplayActions2e} from './apps/displayActions';
 export interface MyModule extends Game.ModuleData<ModuleData> {
   displayActions2e: DisplayActions2e;
 }
+
+export interface EmitData {
+  operation: String;
+  user: String;
+  displayApp: DisplayActions2e;
+  html: any;
+}
+
+export interface DisplayActions2eData {
+  numOfActions: number;
+  numOfReactions: number;
+  classNameListActions: string[];
+  classNameListReactions: string[];
+}
