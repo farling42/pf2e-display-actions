@@ -5,14 +5,14 @@ export class DisplayActions2e extends Application {
   private clickString = 'symbolClick';
   private actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
   private reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
-  private numOfActions = 3;
-  private numOfReactions = 1;
+  private defaultNumOfActions = 3;
+  private defaultNumOfReactions = 1;
 
   private state: DisplayActions2eData = {
-    numOfActions: this.numOfActions,
-    numOfReactions: this.numOfReactions,
-    classNameListActions: Array.from({length: this.numOfActions}, () => 'symbol'),
-    classNameListReactions: Array.from({length: this.numOfReactions}, () => 'symbol'),
+    numOfActions: this.defaultNumOfActions,
+    numOfReactions: this.defaultNumOfReactions,
+    classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
+    classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
   };
 
   constructor(newState?: DisplayActions2eData) {
@@ -42,15 +42,15 @@ export class DisplayActions2e extends Application {
     this.updateState();
 
     return {
-      numOfActions: this.numOfActions,
-      numOfReactions: this.numOfReactions,
+      numOfActions: this.state.numOfActions,
+      numOfReactions: this.state.numOfReactions,
       actionImagePayload: this.buildHandlebarPayload(
-        this.numOfActions,
+        this.state.numOfActions,
         {actionImage: this.actionImage},
         this.state.classNameListActions,
       ),
       reactionImagePayload: this.buildHandlebarPayload(
-        this.numOfReactions,
+        this.state.numOfReactions,
         {reactionImage: this.reactionImage},
         this.state.classNameListReactions,
       ),
@@ -113,10 +113,10 @@ export class DisplayActions2e extends Application {
       if (value >= 0) {
         switch (input.id) {
           case 'count-action':
-            this.numOfActions = value;
+            this.state.numOfActions = value;
             break;
           case 'count-reaction':
-            this.numOfReactions = value;
+            this.state.numOfReactions = value;
             break;
           default:
             console.error(`${moduleId} incorrectly handled number of actions!`);
@@ -154,26 +154,32 @@ export class DisplayActions2e extends Application {
    */
   private updateState() {
     // case to few state elements
-    if (this.state.classNameListActions.length < this.numOfActions) {
-      const tmp = Array.from({length: this.numOfActions - this.state.classNameListActions.length}, () => 'symbol');
+    if (this.state.classNameListActions.length < this.state.numOfActions) {
+      const tmp = Array.from(
+        {length: this.state.numOfActions - this.state.classNameListActions.length},
+        () => 'symbol',
+      );
       this.state.classNameListActions = this.state.classNameListActions.concat(tmp);
     }
     // too many elements,we remove the last elements
-    else if (this.state.classNameListActions.length > this.numOfActions) {
-      const cut_value = this.state.classNameListActions.length - this.numOfActions;
+    else if (this.state.classNameListActions.length > this.state.numOfActions) {
+      const cut_value = this.state.classNameListActions.length - this.state.numOfActions;
       this.state.classNameListActions = this.state.classNameListActions.slice(0, cut_value);
     }
 
     // other state same cases
 
     // case to few state elements
-    if (this.state.classNameListReactions.length < this.numOfReactions) {
-      const tmp = Array.from({length: this.numOfReactions - this.state.classNameListReactions.length}, () => 'symbol');
+    if (this.state.classNameListReactions.length < this.state.numOfReactions) {
+      const tmp = Array.from(
+        {length: this.state.numOfReactions - this.state.classNameListReactions.length},
+        () => 'symbol',
+      );
       this.state.classNameListReactions = this.state.classNameListReactions.concat(tmp);
     }
-    // too many elements,we remove the last elements
-    else if (this.state.classNameListReactions.length > this.numOfReactions) {
-      const cut_value = this.state.classNameListReactions.length - this.numOfReactions;
+    // too many elements, we remove the last elements
+    else if (this.state.classNameListReactions.length > this.state.numOfReactions) {
+      const cut_value = this.state.classNameListReactions.length - this.state.numOfReactions;
       this.state.classNameListReactions = this.state.classNameListReactions.slice(0, cut_value);
     }
   }
