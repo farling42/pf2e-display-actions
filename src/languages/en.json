@@ -3,5 +3,11 @@
   "DisplayActions2e.htmlPath": "../templates/result.html",
   "DisplayActions2e.ButtonName": "Pf2eActions",
   "DisplayActions2e.ButtonHint": "Display Actions",
-  "DisplayActions2e.ButtonIcon": "pf2-actions a"
+  "DisplayActions2e.ButtonIcon": "pf2-actions a",
+  "selectiveshow": {
+    "Show" : "Show",
+    "ShowAll": "Show All",
+    "SelectiveShow": "Selective Show",
+    "MustBeAnOwnerError": "You may only request to show Journal Entries which you own."
+}
 }
