@@ -101,17 +101,11 @@ export class SelectiveShowApp extends FormApplication {
         this.userNameList.push(activeUserId);
       }
     }
-
-    console.log(this.userNameList);
-    return new Promise<unknown>(() => {
-      console.log('In the Promise');
-    });
+    return new Promise<unknown>(() => {});
   }
 
   _handleShowPlayers(state: DisplayActions2eData) {
     this.render(true);
     this.displayActionState = state;
-    console.log(this.displayActionState);
-    console.log(this.userNameList);
   }
 }

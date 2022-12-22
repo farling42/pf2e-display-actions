@@ -29,9 +29,6 @@ export function handleUpdate(data: EmitData) {
       // check for title OR own application update
       // this is why checkForApp cannot be used
       if (app.title.includes(nameInTitle!) || data.state.sentFromUserId === (game as Game).userId) {
-        console.log(`Receive ${nameInTitle}`);
-        console.log(app);
-        console.log(data);
         app.setState(data.state);
         app.render(false, {id: `DisplayActions2e${data.user}`});
       }
