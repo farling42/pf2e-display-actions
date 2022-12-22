@@ -5,7 +5,7 @@ import {defineConfig, Plugin} from 'vite';
 
 const moduleVersion = process.env.MODULE_VERSION;
 const githubProject = 'MoonIsFalling/pf2e-display-actions';
-const githubTag = process.env.GH_TAG;
+// const githubTag = process.env.GH_TAG;
 
 console.log(process.env.VSCODE_INJECTION);
 
