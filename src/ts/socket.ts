@@ -12,3 +12,7 @@ export function handleShowToSelection(data: EmitData) {
     dialog.render(true, {id: `DisplayActions2e${data.user}`});
   }
 }
+
+export function handleShowWithPermission(data: EmitData) {
+  handleShowToSelection(data);
+}

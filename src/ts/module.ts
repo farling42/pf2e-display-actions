@@ -5,7 +5,7 @@ import {DisplayActions2e} from './apps/displayActions';
 import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import './socket';
-import {handleShowToAll, handleShowToSelection} from './socket';
+import {handleShowToAll, handleShowToSelection, handleShowWithPermission} from './socket';
 
 let module: MyModule;
 
@@ -43,6 +43,10 @@ Hooks.on('ready', () => {
         break;
       case 'showToSelection':
         handleShowToSelection(data);
+        break;
+      case 'showWithPermission':
+        handleShowWithPermission(data);
+        break;
       default:
         console.log(data);
         break;

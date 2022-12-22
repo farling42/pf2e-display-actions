@@ -14,7 +14,8 @@ export class DisplayActions2e extends Application {
     numOfReactions: this.defaultNumOfReactions,
     classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
-    sentFromName: String((game as Game).user?.name),
+    sentFromUserId: String((game as Game).userId),
+    userListPermissions: [String((game as Game).userId)],
   };
 
   private showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String((game as Game).user?.name)], this.state);
@@ -29,10 +30,16 @@ export class DisplayActions2e extends Application {
 
   override get title(): string {
     let title = (game as Game).i18n.localize('DisplayActions2e.WindowTitle');
-    if (this.state.sentFromName === (game as Game).user?.name) {
+    if (this.state.sentFromUserId === (game as Game).userId) {
       return title;
     }
-    return title.concat(' sent from ', this.state.sentFromName);
+
+    let name = (game as Game).users?.find(user => {
+      return user.id === this.state.sentFromUserId;
+    })?.name;
+    console.log(name);
+
+    return title.concat(' sent from ', String(name));
   }
 
   static override get defaultOptions(): ApplicationOptions {
@@ -68,7 +75,8 @@ export class DisplayActions2e extends Application {
   override activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
     // only register events for oneself
-    if (String((game as Game).user?.name) === this.state.sentFromName) {
+    // if (String((game as Game).userId) === this.state.sentFromUserId) {
+    if (this.state.userListPermissions.includes(String((game as Game).userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
     }
