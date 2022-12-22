@@ -87,14 +87,7 @@ export class DisplayActions2e extends Application {
     if (image === undefined || image === null) {
       return;
     }
-    if (image.className === undefined || image.className === null) {
-      return;
-    }
-    if (image.className.includes(this.clickString)) {
-      image.className = image.className.replace(this.clickString, '');
-    } else {
-      image.className = image.className.concat(' ', this.clickString);
-    }
+    image.classList.toggle(this.clickString);
     // save the state
     // all id begin with either a or r for action or reaction respectively
     const pos = parseInt(image.id.slice(1));
