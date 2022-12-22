@@ -2,18 +2,42 @@ import * as fsPromises from 'fs/promises';
 import copy from 'rollup-plugin-copy';
 import scss from 'rollup-plugin-scss';
 import {defineConfig, Plugin} from 'vite';
+const path = require('path');
 
 const moduleVersion = process.env.MODULE_VERSION;
 const githubProject = 'MoonIsFalling/pf2e-display-actions';
+const projectName = 'pf2e-display-actions';
 // const githubTag = process.env.GH_TAG;
 
 console.log(process.env.VSCODE_INJECTION);
 
 export default defineConfig({
+  root: 'src/',
+  base: `/modules/${projectName}/`,
+  publicDir: path.resolve(__dirname, 'public'),
+  server: {
+    port: 30001,
+    open: true,
+    proxy: {
+      '^(?!/modules/pf2e-display-actions)': 'http://localhost:30000/',
+      '/socket.io': {
+        target: 'ws://localhost:30000',
+        ws: true,
+      },
+    },
+  },
   build: {
+    outDir: path.resolve(__dirname, 'dist'),
     sourcemap: true,
+    emptyOutDir: true,
+    lib: {
+      name: projectName,
+      entry: path.resolve(__dirname, 'src/ts/module.ts'),
+      formats: ['es'],
+      fileName: 'scripts/module',
+    },
     rollupOptions: {
-      input: 'src/ts/module.ts',
+      input: '/ts/module.ts',
       output: {
         dir: undefined,
         file: 'dist/scripts/module.js',
