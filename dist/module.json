@@ -45,5 +45,9 @@
         "./*.css",
         "./*.css.map"
     ],
-    "socket": true
+    "socket": true,
+    "bugs": "https://github.com/MoonIsFalling/pf2e-display-actions/issues",
+    "flags": {
+        "allowBugReporter": true
+    }
 }
