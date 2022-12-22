@@ -4,7 +4,7 @@ import scss from 'rollup-plugin-scss';
 import {defineConfig, Plugin} from 'vite';
 
 const moduleVersion = process.env.MODULE_VERSION;
-const githubProject = process.env.GH_PROJECT;
+const githubProject = 'MoonIsFalling/pf2e-display-actions';
 const githubTag = process.env.GH_TAG;
 
 console.log(process.env.VSCODE_INJECTION);
@@ -53,9 +53,9 @@ function updateModuleManifestPlugin(): Plugin {
       manifestJson['version'] = version;
       if (githubProject) {
         const baseUrl = `https://github.com/${githubProject}/releases`;
-        manifestJson['manifest'] = `${baseUrl}/latest/download/module.json`;
-        if (githubTag) {
-          manifestJson['download'] = `${baseUrl}/download/${githubTag}/module.zip`;
+        manifestJson['manifest'] = `${baseUrl}/download/${version}/module.json`;
+        if (version) {
+          manifestJson['download'] = `${baseUrl}/download/${version}/module.zip`;
         }
       }
       await fsPromises.writeFile('dist/module.json', JSON.stringify(manifestJson, null, 4));
