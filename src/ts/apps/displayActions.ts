@@ -1,5 +1,5 @@
-import {moduleId} from '../constants';
-import {DisplayActions2eData} from '../types';
+import {moduleId, socketEvent} from '../constants';
+import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
 
 export class DisplayActions2e extends Application {
@@ -37,7 +37,6 @@ export class DisplayActions2e extends Application {
     let name = (game as Game).users?.find(user => {
       return user.id === this.state.sentFromUserId;
     })?.name;
-    console.log(name);
 
     return title.concat(' sent from ', String(name));
   }
@@ -74,8 +73,7 @@ export class DisplayActions2e extends Application {
 
   override activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
-    // only register events for oneself
-    // if (String((game as Game).userId) === this.state.sentFromUserId) {
+    // register events for all users with permission
     if (this.state.userListPermissions.includes(String((game as Game).userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
@@ -110,6 +108,8 @@ export class DisplayActions2e extends Application {
       default:
         console.error(`${moduleId} handled Image onClicks wrong.`);
     }
+
+    this.emitUpdate();
   }
 
   /**
@@ -141,6 +141,7 @@ export class DisplayActions2e extends Application {
             console.error(`${moduleId} incorrectly handled number of actions!`);
         }
         this.render();
+        this.emitUpdate();
       }
     }
   }
@@ -192,5 +193,19 @@ export class DisplayActions2e extends Application {
       const cut_value = this.state.classNameListReactions.length - this.state.numOfReactions;
       this.state.classNameListReactions = this.state.classNameListReactions.slice(0, cut_value);
     }
+  }
+
+  private emitUpdate() {
+    console.log('emit Hans');
+
+    (game as Game).socket?.emit(socketEvent, {
+      operation: 'update',
+      state: this.state,
+      user: (game as Game).userId,
+    } as EmitData);
+  }
+
+  public setState(newState: DisplayActions2eData) {
+    this.state = newState;
   }
 }

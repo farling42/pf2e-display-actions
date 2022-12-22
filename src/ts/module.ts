@@ -5,9 +5,10 @@ import {DisplayActions2e} from './apps/displayActions';
 import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import './socket';
-import {handleShowToAll, handleShowToSelection, handleShowWithPermission} from './socket';
+import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './socket';
 
 let module: MyModule;
+let homeDisplayActions: DisplayActions2e;
 
 // Foundry Hooks
 Hooks.once('init', () => {
@@ -25,7 +26,7 @@ Hooks.on('getSceneControlButtons', hudButtons => {
     icon: 'fa fa-angle-double-right',
     button: true,
     onClick: async () => {
-      module.displayActions2e.render(true);
+      homeDisplayActions.render(true);
       (game as Game).socket?.emit('module.DisplayActions2e', {event: 'DisplayActions2e'});
     },
   });
@@ -33,7 +34,8 @@ Hooks.on('getSceneControlButtons', hudButtons => {
 
 Hooks.on('ready', () => {
   module = (game as Game).modules.get(moduleId) as MyModule;
-  module.displayActions2e = new DisplayActions2e();
+  homeDisplayActions = new DisplayActions2e();
+  module.displayActions2e = [homeDisplayActions];
   // sockets
   (game as Game).socket?.on(socketEvent, (data: EmitData) => {
     // all my events
@@ -46,6 +48,9 @@ Hooks.on('ready', () => {
         break;
       case 'showWithPermission':
         handleShowWithPermission(data);
+        break;
+      case 'update':
+        handleUpdate(data);
         break;
       default:
         console.log(data);

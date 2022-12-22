@@ -93,6 +93,15 @@ export class SelectiveShowApp extends FormApplication {
       }
       return '';
     });
+
+    // active User Id needs to be send always
+    let activeUserId = (game as Game).userId;
+    if (activeUserId) {
+      if (!this.userNameList.includes(activeUserId)) {
+        this.userNameList.push(activeUserId);
+      }
+    }
+
     console.log(this.userNameList);
     return new Promise<unknown>(() => {
       console.log('In the Promise');

@@ -2,7 +2,7 @@ import {ModuleData} from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import {DisplayActions2e} from './apps/displayActions';
 
 export interface MyModule extends Game.ModuleData<ModuleData> {
-  displayActions2e: DisplayActions2e;
+  displayActions2e: DisplayActions2e[];
 }
 
 export interface EmitData {
