@@ -20,6 +20,7 @@
     "noImplicitOverride": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
+    "strictNullChecks": true,
     "paths": {
       "@pf2e/*": ["/types/src/*"],
       "@actor": ["/types/src/module/actor/index"],
