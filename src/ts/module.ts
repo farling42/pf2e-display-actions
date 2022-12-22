@@ -6,7 +6,6 @@ import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import './socket';
 import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './socket';
-import {DataWrapper2e} from './DataWrapper2e';
 
 let module: MyModule;
 let homeDisplayActions: DisplayActions2e;
@@ -16,21 +15,24 @@ Hooks.once('init', () => {
   console.log(`Initializing ${moduleId}`);
 });
 
-Hooks.on('getSceneControlButtons', hudButtons => {
+Hooks.on('getSceneControlButtons', (hudButtons: SceneControl[]) => {
   let hud = hudButtons.find((value: any) => {
     return value.name === 'token';
   });
 
-  hud?.tools.push({
+  let tool: SceneControlTool = {
     name: 'DisplayActions2e.ButtonName',
     title: 'DisplayActions2e.ButtonHint',
     icon: 'fa fa-angle-double-right',
     button: true,
+    visible: true,
     onClick: async () => {
       homeDisplayActions.render(true);
       game.socket?.emit('module.DisplayActions2e', {event: 'DisplayActions2e'});
     },
-  });
+  };
+
+  hud?.tools?.push(tool);
 });
 
 Hooks.on('ready', () => {
@@ -58,5 +60,4 @@ Hooks.on('ready', () => {
         break;
     }
   });
-  DataWrapper2e.getData();
 });

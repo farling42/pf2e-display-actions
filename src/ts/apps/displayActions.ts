@@ -1,17 +1,18 @@
+import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
 import {moduleId, socketEvent} from '../constants';
-import {DataWrapper2e} from '../DataWrapper2e';
 import {DisplayActions2eData, EmitData} from '../types';
+import {DisplayTokenActions2e} from './displayTokenActions';
 import {SelectiveShowApp} from './selectiveShow';
 
 export class DisplayActions2e extends Application {
-  private clickString = 'symbolClick';
-  private actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
-  private reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
-  private defaultNumOfActions = 3;
-  private defaultNumOfReactions = 1;
-  private isLinkedToActor = false;
+  protected clickString = 'symbolClick';
+  protected actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
+  protected reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
+  protected defaultNumOfActions = 3;
+  protected defaultNumOfReactions = 1;
+  protected isLinkedToActor = false;
 
-  private state: DisplayActions2eData = {
+  protected state: DisplayActions2eData = {
     numOfActions: this.defaultNumOfActions,
     numOfReactions: this.defaultNumOfReactions,
     classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
@@ -20,7 +21,7 @@ export class DisplayActions2e extends Application {
     userListPermissions: [String(game.userId)],
   };
 
-  private showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String(game.user?.data.name)], this.state);
+  protected showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String(game.user?.data.name)], this.state);
 
   constructor(newState?: DisplayActions2eData, linked = false) {
     super();
@@ -81,11 +82,12 @@ export class DisplayActions2e extends Application {
     if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
-      html.find('button.actorLink').on('click', DataWrapper2e.createApplications.bind(DataWrapper2e));
+      // html.find('button.actorLink').on('click', DataWrapper2e.createApplications.bind(DataWrapper2e));
+      html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
     }
   }
 
-  private _onClickSymbolImage(event: Event) {
+  protected _onClickSymbolImage(event: Event) {
     event.preventDefault();
     // switch css classes of the images
     const image = event.currentTarget as HTMLImageElement;
@@ -114,7 +116,7 @@ export class DisplayActions2e extends Application {
    * Helper function to make Payload for Handlebars each loop to pass data
    * @param iterator array size
    */
-  private buildHandlebarPayload(iterator: number, imageObj: any, state: string[]) {
+  protected buildHandlebarPayload(iterator: number, imageObj: any, state: string[]) {
     let payload = [];
     for (let index = 0; index < iterator; index++) {
       payload.push(foundry.utils.mergeObject({number: index, cssClass: state[index]}, imageObj));
@@ -122,7 +124,7 @@ export class DisplayActions2e extends Application {
     return payload;
   }
 
-  private _onChangeCountNumber(event: Event) {
+  protected _onChangeCountNumber(event: Event) {
     event.preventDefault();
     const input = event.currentTarget as HTMLInputElement;
     const value = parseInt(input.value);
@@ -161,7 +163,7 @@ export class DisplayActions2e extends Application {
   /**
    * Update internal state based on the size of the arrays
    */
-  private updateState() {
+  protected updateState() {
     // case to few state elements
     if (this.state.classNameListActions.length < this.state.numOfActions) {
       const tmp = Array.from(
@@ -193,7 +195,7 @@ export class DisplayActions2e extends Application {
     }
   }
 
-  private emitUpdate() {
+  protected emitUpdate() {
     game.socket?.emit(socketEvent, {
       operation: 'update',
       state: this.state,
@@ -203,5 +205,14 @@ export class DisplayActions2e extends Application {
 
   public setState(newState: DisplayActions2eData) {
     this.state = newState;
+  }
+
+  private _onButtonClickSelectedActors(event: Event) {
+    console.log(event);
+    canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
+      let app = new DisplayTokenActions2e(token.data._id);
+      // let app = new DisplayActions2e();
+      app.render(true);
+    });
   }
 }

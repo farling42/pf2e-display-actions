@@ -1,4 +1,5 @@
-import {DisplayActions2e} from './apps/displayActions';
+import {TokenDocumentPF2e} from '../../types/src/module/token-document';
+import {DisplayTokenActions2e} from './apps/displayTokenActions';
 
 export class DataWrapper2e {
   /*private conditions = {
@@ -15,11 +16,10 @@ export class DataWrapper2e {
   }
 
   public static createApplications() {
-    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
-    canvas.tokens.controlled.forEach((token: any) => {
-      let app = new DisplayActions2e(undefined, true);
-      title.concat(`for ${token.name}`);
-      app.render(true, {id: `DisplayActions2e${game.userId}`, title: title} as RenderOptions);
+    canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
+      let app = new DisplayTokenActions2e(token.data._id);
+      // let app = new DisplayActions2e();
+      app.render(true);
     });
   }
 }
