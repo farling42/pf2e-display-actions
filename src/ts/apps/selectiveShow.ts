@@ -53,13 +53,27 @@ export class SelectiveShowApp extends FormApplication {
     html.find('.show-all').click(ev => {
       ev.preventDefault();
       this._updateObject();
-      // 👇️ ts-ignore ignores any ts errors on the next line
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+
       (game as Game).socket?.emit(socketEvent, {
         operation: 'showToAll',
         state: this.displayActionState,
         user: (game as Game).userId,
+      } as EmitData);
+
+      this.close();
+    });
+
+    html.find('.show-permissions').click(ev => {
+      ev.preventDefault();
+      this._updateObject();
+
+      this.displayActionState.userListPermissions = this.userNameList;
+
+      (game as Game).socket?.emit(socketEvent, {
+        operation: 'showWithPermission',
+        state: this.displayActionState,
+        user: (game as Game).userId,
+        userList: this.userNameList,
       } as EmitData);
 
       this.close();
@@ -79,16 +93,19 @@ export class SelectiveShowApp extends FormApplication {
       }
       return '';
     });
-    console.log(this.userNameList);
-    return new Promise<unknown>(() => {
-      console.log('In the Promise');
-    });
+
+    // active User Id needs to be send always
+    let activeUserId = (game as Game).userId;
+    if (activeUserId) {
+      if (!this.userNameList.includes(activeUserId)) {
+        this.userNameList.push(activeUserId);
+      }
+    }
+    return new Promise<unknown>(() => {});
   }
 
   _handleShowPlayers(state: DisplayActions2eData) {
     this.render(true);
     this.displayActionState = state;
-    console.log(this.displayActionState);
-    console.log(this.userNameList);
   }
 }
