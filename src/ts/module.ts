@@ -6,6 +6,7 @@ import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import './socket';
 import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './socket';
+import {DataWrapper2e} from './DataWrapper2e';
 
 let module: MyModule;
 let homeDisplayActions: DisplayActions2e;
@@ -16,7 +17,7 @@ Hooks.once('init', () => {
 });
 
 Hooks.on('getSceneControlButtons', hudButtons => {
-  let hud = hudButtons.find(value => {
+  let hud = hudButtons.find((value: any) => {
     return value.name === 'token';
   });
 
@@ -27,17 +28,17 @@ Hooks.on('getSceneControlButtons', hudButtons => {
     button: true,
     onClick: async () => {
       homeDisplayActions.render(true);
-      (game as Game).socket?.emit('module.DisplayActions2e', {event: 'DisplayActions2e'});
+      game.socket?.emit('module.DisplayActions2e', {event: 'DisplayActions2e'});
     },
   });
 });
 
 Hooks.on('ready', () => {
-  module = (game as Game).modules.get(moduleId) as MyModule;
+  module = game.modules.get(moduleId) as unknown as MyModule;
   homeDisplayActions = new DisplayActions2e();
   module.displayActions2e = [homeDisplayActions];
   // sockets
-  (game as Game).socket?.on(socketEvent, (data: EmitData) => {
+  game.socket?.on(socketEvent, (data: EmitData) => {
     // all my events
     switch (data.operation) {
       case 'showToAll':
@@ -57,4 +58,5 @@ Hooks.on('ready', () => {
         break;
     }
   });
+  DataWrapper2e.getData();
 });

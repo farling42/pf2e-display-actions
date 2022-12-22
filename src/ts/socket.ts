@@ -4,13 +4,13 @@ import {EmitData, MyModule} from './types';
 
 export function handleShowToAll(data: EmitData) {
   const dialog = checkForApp(data);
-  dialog.render(true, {id: `DisplayActions2e${data.user}`});
+  dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
 }
 
 export function handleShowToSelection(data: EmitData) {
-  if (data.userList?.includes(String((game as Game).userId))) {
+  if (data.userList?.includes(String(game.userId))) {
     const dialog = checkForApp(data);
-    dialog.render(true, {id: `DisplayActions2e${data.user}`});
+    dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
   }
 }
 
@@ -19,18 +19,18 @@ export function handleShowWithPermission(data: EmitData) {
 }
 
 export function handleUpdate(data: EmitData) {
-  let module = (game as Game).modules.get(moduleId) as MyModule;
-  let nameInTitle = (game as Game).users?.find(user => {
-    return user.id === data.state.sentFromUserId;
-  })?.name;
+  let module = game.modules.get(moduleId) as unknown as MyModule;
+  let nameInTitle = game.users?.find(user => {
+    return user.data._id === data.state.sentFromUserId;
+  })?.data.name;
 
   if (nameInTitle) {
     module.displayActions2e.forEach(app => {
       // check for title OR own application update
       // this is why checkForApp cannot be used
-      if (app.title.includes(nameInTitle!) || data.state.sentFromUserId === (game as Game).userId) {
+      if (app.title.includes(nameInTitle!) || data.state.sentFromUserId === game.userId) {
         app.setState(data.state);
-        app.render(false, {id: `DisplayActions2e${data.user}`});
+        app.render(false, {id: `DisplayActions2e${data.user}`} as RenderOptions);
       }
     });
   }
@@ -43,10 +43,10 @@ export function handleUpdate(data: EmitData) {
  * @returns either found DisplayActions2e or new DisplayActions2e with state
  */
 function checkForApp(data: EmitData): DisplayActions2e {
-  let module = (game as Game).modules.get(moduleId) as MyModule;
-  let nameInTitle = (game as Game).users?.find(user => {
-    return user.id === data.state.sentFromUserId;
-  })?.name;
+  let module = game.modules.get(moduleId) as unknown as MyModule;
+  let nameInTitle = game.users?.find(user => {
+    return user.data._id === data.state.sentFromUserId;
+  })?.data.name;
   let newApp: DisplayActions2e = new DisplayActions2e(data.state);
 
   if (nameInTitle) {

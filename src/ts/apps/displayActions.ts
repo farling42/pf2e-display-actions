@@ -1,4 +1,5 @@
 import {moduleId, socketEvent} from '../constants';
+import {DataWrapper2e} from '../DataWrapper2e';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
 
@@ -8,20 +9,22 @@ export class DisplayActions2e extends Application {
   private reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
   private defaultNumOfActions = 3;
   private defaultNumOfReactions = 1;
+  private isLinkedToActor = false;
 
   private state: DisplayActions2eData = {
     numOfActions: this.defaultNumOfActions,
     numOfReactions: this.defaultNumOfReactions,
     classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
-    sentFromUserId: String((game as Game).userId),
-    userListPermissions: [String((game as Game).userId)],
+    sentFromUserId: String(game.userId),
+    userListPermissions: [String(game.userId)],
   };
 
-  private showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String((game as Game).user?.name)], this.state);
+  private showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String(game.user?.data.name)], this.state);
 
-  constructor(newState?: DisplayActions2eData) {
+  constructor(newState?: DisplayActions2eData, linked = false) {
     super();
+    this.isLinkedToActor = linked;
 
     if (newState) {
       this.state = newState;
@@ -29,14 +32,14 @@ export class DisplayActions2e extends Application {
   }
 
   override get title(): string {
-    let title = (game as Game).i18n.localize('DisplayActions2e.WindowTitle');
-    if (this.state.sentFromUserId === (game as Game).userId) {
+    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+    if (this.state.sentFromUserId === game.userId) {
       return title;
     }
 
-    let name = (game as Game).users?.find(user => {
-      return user.id === this.state.sentFromUserId;
-    })?.name;
+    let name = game.users?.find(user => {
+      return user.data._id === this.state.sentFromUserId;
+    })?.data.name;
 
     return title.concat(' sent from ', String(name));
   }
@@ -68,15 +71,17 @@ export class DisplayActions2e extends Application {
         {reactionImage: this.reactionImage},
         this.state.classNameListReactions,
       ),
+      isLinkedToActor: this.isLinkedToActor,
     };
   }
 
   override activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
     // register events for all users with permission
-    if (this.state.userListPermissions.includes(String((game as Game).userId))) {
+    if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
+      html.find('button.actorLink').on('click', DataWrapper2e.createApplications.bind(DataWrapper2e));
     }
   }
 
@@ -139,10 +144,10 @@ export class DisplayActions2e extends Application {
     }
   }
 
-  protected override _getHeaderButtons(): Application.HeaderButton[] {
+  protected override _getHeaderButtons(): ApplicationHeaderButton[] {
     const buttons = super._getHeaderButtons();
 
-    const headerButton: Application.HeaderButton = {
+    const headerButton: ApplicationHeaderButton = {
       label: 'JOURNAL.ActionShow',
       class: 'share-image',
       icon: 'fas fa-eye',
@@ -189,10 +194,10 @@ export class DisplayActions2e extends Application {
   }
 
   private emitUpdate() {
-    (game as Game).socket?.emit(socketEvent, {
+    game.socket?.emit(socketEvent, {
       operation: 'update',
       state: this.state,
-      user: (game as Game).userId,
+      user: game.userId,
     } as EmitData);
   }
 
