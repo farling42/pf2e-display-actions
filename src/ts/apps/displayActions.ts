@@ -196,8 +196,6 @@ export class DisplayActions2e extends Application {
   }
 
   private emitUpdate() {
-    console.log('emit Hans');
-
     (game as Game).socket?.emit(socketEvent, {
       operation: 'update',
       state: this.state,
