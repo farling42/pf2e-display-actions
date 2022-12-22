@@ -22,9 +22,28 @@
     "noImplicitReturns": true,
     "noImplicitOverride": true,
     "noImplicitAny": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pf2e/*": ["types/src/*"],
+      "@actor": ["types/src/module/actor/index"],
+      "@actor/*": ["types/src/module/actor/*"],
+      "@item": ["types/src/module/item/index"],
+      "@item/*": ["types/src/module/item/*"],
+      "@system/*": ["types/src/module/system/*"],
+      "@module/*": ["types/src/module/*"],
+      "@scripts/*": ["types/src/scripts/*"]
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "types/foundry"
+    ]
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "types"
+  ],
+  "ts-node": {
+    "files": true
+  }
 }
