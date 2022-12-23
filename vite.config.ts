@@ -2,6 +2,7 @@ import * as fsPromises from 'fs/promises';
 import copy from 'rollup-plugin-copy';
 import scss from 'rollup-plugin-scss';
 import {defineConfig, Plugin} from 'vite';
+
 const path = require('path');
 
 const moduleVersion = process.env.MODULE_VERSION;
@@ -11,7 +12,7 @@ const projectName = 'pf2e-display-actions';
 
 console.log(process.env.VSCODE_INJECTION);
 
-export default defineConfig({
+const config = defineConfig({
   root: 'src/',
   base: `/modules/${projectName}/`,
   publicDir: path.resolve(__dirname, 'public'),
@@ -26,10 +27,22 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    // exclude: ['@sveltejs/vite-plugin-svelte'],
+    include: ['jszip'],
+  },
   build: {
     outDir: path.resolve(__dirname, 'dist'),
     sourcemap: true,
     emptyOutDir: true,
+    reportCompressedSize: true,
+    minify: 'terser',
+    terserOptions: {
+      mangle: false,
+      keep_classnames: true,
+      keep_fnames: true,
+      compress: true,
+    },
     lib: {
       name: projectName,
       entry: path.resolve(__dirname, 'src/ts/module.ts'),
@@ -37,9 +50,8 @@ export default defineConfig({
       fileName: 'scripts/module',
     },
     rollupOptions: {
-      input: '/ts/module.ts',
+      input: 'src/ts/module.ts',
       output: {
-        dir: undefined,
         file: 'dist/scripts/module.js',
         format: 'es',
       },
@@ -86,3 +98,5 @@ function updateModuleManifestPlugin(): Plugin {
     },
   };
 }
+
+export default config;

@@ -1,8 +1,7 @@
-import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
 import {moduleId, socketEvent} from '../constants';
+import {DataWrapper2e} from '../DataWrapper2e';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
-import {DisplayTokenActions2e} from './displayTokenActions';
 
 export class DisplayActions2e extends Application {
   protected clickString = 'symbolClick';
@@ -82,8 +81,8 @@ export class DisplayActions2e extends Application {
     if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
-      // html.find('button.actorLink').on('click', DataWrapper2e.createApplications.bind(DataWrapper2e));
-      html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
+      html.find('button.actorLink').on('click', DataWrapper2e.createApplications.bind(DataWrapper2e));
+      // html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
     }
   }
 
@@ -205,14 +204,5 @@ export class DisplayActions2e extends Application {
 
   public setState(newState: DisplayActions2eData) {
     this.state = newState;
-  }
-
-  private _onButtonClickSelectedActors(event: Event) {
-    console.log(event);
-    canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
-      let app = new DisplayTokenActions2e(token.data._id);
-      // let app = new DisplayActions2e();
-      app.render(true);
-    });
   }
 }

@@ -1,11 +1,11 @@
 // Do not remove this import. If you do Vite will think your styles are dead
 // code and not include them in the build output.
 import '../styles/module.css';
-import {DisplayActions2e} from './apps/displayActions';
 import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import './socket';
 import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './socket';
+import {DisplayActions2e} from './apps/displayActions';
 
 let module: MyModule;
 let homeDisplayActions: DisplayActions2e;
