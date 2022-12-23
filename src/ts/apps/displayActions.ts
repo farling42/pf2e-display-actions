@@ -1,8 +1,8 @@
 import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
 import {moduleId, socketEvent} from '../constants';
 import {DisplayActions2eData, EmitData} from '../types';
-import {DisplayTokenActions2e} from './displayTokenActions';
 import {SelectiveShowApp} from './selectiveShow';
+import {DisplayTokenActions2e} from './displayTokenActions';
 
 export class DisplayActions2e extends Application {
   protected clickString = 'symbolClick';

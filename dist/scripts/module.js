@@ -2,41 +2,7 @@ var A = Object.defineProperty;
 var y = (i, a, t) => a in i ? A(i, a, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[a] = t;
 var o = (i, a, t) => (y(i, typeof a != "symbol" ? a + "" : a, t), t);
 const b = "pf2e-display-actions", l = b, r = `module.${l}`;
-class L extends m {
-  constructor(t, e) {
-    super(e);
-    o(this, "tokenId");
-    this.isLinkedToActor = !0, this.tokenId = t, console.log(this.tokenId);
-  }
-  get title() {
-    let t = game.i18n.localize("DisplayActions2e.WindowTitle");
-    if (this.state.sentFromUserId === game.userId)
-      return t;
-    let e = canvas.data.tokens.find((s) => s.data._id === this.tokenId);
-    return t.concat(" for ", String(e));
-  }
-  activateListeners(t) {
-    super.activateListeners(t), this.state.userListPermissions.includes(String(game.userId)) && (t.find("img.symbol").on("click", this._onClickSymbolImage.bind(this)), t.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this)));
-  }
-  getData() {
-    return this.updateState(), {
-      numOfActions: this.state.numOfActions,
-      numOfReactions: this.state.numOfReactions,
-      actionImagePayload: this.buildHandlebarPayload(
-        this.state.numOfActions,
-        { actionImage: this.actionImage },
-        this.state.classNameListActions
-      ),
-      reactionImagePayload: this.buildHandlebarPayload(
-        this.state.numOfReactions,
-        { reactionImage: this.reactionImage },
-        this.state.classNameListReactions
-      ),
-      isLinkedToActor: this.isLinkedToActor
-    };
-  }
-}
-class k extends FormApplication {
+class L extends FormApplication {
   constructor(t, e) {
     super(t);
     o(this, "userNameList");
@@ -91,6 +57,40 @@ class k extends FormApplication {
     this.render(!0), this.displayActionState = t;
   }
 }
+class k extends m {
+  constructor(t, e) {
+    super(e);
+    o(this, "tokenId");
+    this.isLinkedToActor = !0, this.tokenId = t, console.log(this.tokenId);
+  }
+  get title() {
+    let t = game.i18n.localize("DisplayActions2e.WindowTitle");
+    if (this.state.sentFromUserId === game.userId)
+      return t;
+    let e = canvas.data.tokens.find((s) => s.data._id === this.tokenId);
+    return t.concat(" for ", String(e));
+  }
+  activateListeners(t) {
+    super.activateListeners(t), this.state.userListPermissions.includes(String(game.userId)) && (t.find("img.symbol").on("click", this._onClickSymbolImage.bind(this)), t.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this)));
+  }
+  getData() {
+    return this.updateState(), {
+      numOfActions: this.state.numOfActions,
+      numOfReactions: this.state.numOfReactions,
+      actionImagePayload: this.buildHandlebarPayload(
+        this.state.numOfActions,
+        { actionImage: this.actionImage },
+        this.state.classNameListActions
+      ),
+      reactionImagePayload: this.buildHandlebarPayload(
+        this.state.numOfReactions,
+        { reactionImage: this.reactionImage },
+        this.state.classNameListReactions
+      ),
+      isLinkedToActor: this.isLinkedToActor
+    };
+  }
+}
 var h;
 class m extends Application {
   constructor(t, e = !1) {
@@ -109,7 +109,7 @@ class m extends Application {
       sentFromUserId: String(game.userId),
       userListPermissions: [String(game.userId)]
     });
-    o(this, "showPlayerHandler", new k([String((h = game.user) == null ? void 0 : h.data.name)], this.state));
+    o(this, "showPlayerHandler", new L([String((h = game.user) == null ? void 0 : h.data.name)], this.state));
     this.isLinkedToActor = e, t && (this.state = t);
   }
   get title() {
@@ -236,7 +236,7 @@ class m extends Application {
   }
   _onButtonClickSelectedActors(t) {
     console.log(t), canvas.tokens.controlled.forEach((e) => {
-      new L(e.data._id).render(!0);
+      new k(e.data._id).render(!0);
     });
   }
 }
