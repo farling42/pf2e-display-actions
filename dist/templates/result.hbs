@@ -1,0 +1,23 @@
+<section class="main wrapper">
+    <section class="counter">
+    {{#unless isLinkedToActor}}
+        <label for="num-action">Actions: </label>
+        <input class="input-counter" id="count-action" name="num-action" type="number" value="{{this.numOfActions}}">
+        <label for="num-reaction">Reactions: </label>
+        <input class="input-counter" id="count-reaction" name="num-reaction" type="number" value="{{this.numOfReactions}}">
+        <button class="actorLink" id="actorLink">Link to selected Actors</button>
+    {{/unless}} 
+    </section>
+    <section class="flexbox-actions">
+        <section class="actions">
+            {{#each this.actionImagePayload}}
+            <img class="{{this.cssClass}}" src="{{this.actionImage}}" id="a{{this.number}}">
+            {{/each}}
+        </section>
+        <section class="reactions">
+            {{#each this.reactionImagePayload}}
+            <img class="{{this.cssClass}}" src="{{this.reactionImage}}" id="r{{this.number}}">
+            {{/each}}
+        </section>
+    </section>
+</section>

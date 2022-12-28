@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "watch": "tsc && vite build --watch"
   },
+  "files": ["dist"],
+  "type": "module",
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",

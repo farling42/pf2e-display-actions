@@ -2,8 +2,13 @@ import * as fsPromises from 'fs/promises';
 import copy from 'rollup-plugin-copy';
 import scss from 'rollup-plugin-scss';
 import {defineConfig, Plugin} from 'vite';
+import {resolve} from 'path';
+import {svelte} from '@sveltejs/vite-plugin-svelte';
 
-const path = require('path');
+import './src/styles/module.css';
+import './src/styles/styles.css';
+
+// const path = require('path');
 
 const moduleVersion = process.env.MODULE_VERSION;
 const githubProject = 'MoonIsFalling/pf2e-display-actions';
@@ -15,7 +20,8 @@ console.log(process.env.VSCODE_INJECTION);
 const config = defineConfig({
   root: 'src/',
   base: `/modules/${projectName}/`,
-  publicDir: path.resolve(__dirname, 'public'),
+  // publicDir: path.resolve(__dirname, 'public'),
+  publicDir: resolve(__dirname, 'public'),
   server: {
     port: 30001,
     open: true,
@@ -32,27 +38,36 @@ const config = defineConfig({
     include: ['jszip'],
   },
   build: {
-    outDir: path.resolve(__dirname, 'dist'),
+    // outDir: path.resolve(__dirname, 'dist'),
+    outDir: resolve(__dirname, 'dist'),
     sourcemap: true,
     emptyOutDir: true,
     reportCompressedSize: true,
     minify: 'terser',
     terserOptions: {
-      mangle: false,
+      mangle: true,
       keep_classnames: true,
       keep_fnames: true,
       compress: true,
     },
     lib: {
       name: projectName,
-      entry: path.resolve(__dirname, 'src/ts/module.ts'),
+      // entry: path.resolve(__dirname, 'src/ts/module.ts'),
+      entry: resolve(__dirname, 'src/ts/module.ts'),
       formats: ['es'],
       fileName: 'scripts/module',
     },
     rollupOptions: {
-      input: 'src/ts/module.ts',
+      input: {
+        // index: path.resolve(__dirname, 'src/ts/module.ts'),
+        index: resolve(__dirname, 'src/ts/module.ts'),
+      },
+      treeshake: true,
       output: {
-        file: 'dist/scripts/module.js',
+        extend: true,
+        // file: path.resolve(__dirname, 'dist/scripts/module.js'),
+        // file: resolve(__dirname, 'dist/scripts/module.js'),
+        dir: resolve(__dirname, 'dist'),
         format: 'es',
       },
     },
@@ -60,7 +75,9 @@ const config = defineConfig({
   plugins: [
     updateModuleManifestPlugin(),
     scss({
-      output: 'dist/style.css',
+      fileName: 'style.css',
+      // output: 'dist/style.css',
+      includePaths: ['styles/module.css', 'styles/styles.css'],
       sourceMap: true,
       watch: ['src/styles/*.scss'],
     }),
@@ -71,6 +88,9 @@ const config = defineConfig({
         {src: 'src/images', dest: 'dist'},
       ],
       hook: 'writeBundle',
+    }),
+    svelte({
+      configFile: '../svelte.config.cjs', // relative to src/
     }),
   ],
 });

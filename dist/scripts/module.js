@@ -1,0 +1,410 @@
+const module$1 = "";
+const name = "pf2e-display-actions";
+const moduleId = name;
+const socketEvent = `module.${moduleId}`;
+class DisplayTokenActions2e extends DisplayActions2e {
+  constructor(tokenId, newState) {
+    super(newState);
+    this.isLinkedToActor = true;
+    this.tokenId = tokenId;
+    console.log(this.tokenId);
+  }
+  get title() {
+    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+    let name2 = canvas.data.tokens.find((token) => {
+      return token.data._id === this.tokenId;
+    });
+    return title.concat(" for ", String(name2));
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    if (this.state.userListPermissions.includes(String(game.userId))) {
+      html.find("img.symbol").on("click", this._onClickSymbolImage.bind(this));
+      html.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this));
+    }
+  }
+  getData() {
+    this.updateState();
+    return {
+      numOfActions: this.state.numOfActions,
+      numOfReactions: this.state.numOfReactions,
+      actionImagePayload: this.buildHandlebarPayload(
+        this.state.numOfActions,
+        { actionImage: this.actionImage },
+        this.state.classNameListActions
+      ),
+      reactionImagePayload: this.buildHandlebarPayload(
+        this.state.numOfReactions,
+        { reactionImage: this.reactionImage },
+        this.state.classNameListReactions
+      ),
+      isLinkedToActor: this.isLinkedToActor
+    };
+  }
+}
+class DataWrapper2e {
+  static getData() {
+    let numOfActions = 3;
+    let numOfReactions = 1;
+    canvas.tokens.controlled;
+    return [numOfActions, numOfReactions];
+  }
+  static createApplications() {
+    canvas.tokens.controlled.forEach((token) => {
+      let app = new DisplayTokenActions2e(token.data._id);
+      app.render(true);
+    });
+  }
+}
+class SelectiveShowApp extends FormApplication {
+  constructor(users, state) {
+    super(users);
+    this.userNameList = users;
+    this.displayActionState = state;
+  }
+  static get defaultOptions() {
+    var _a;
+    const options = super.defaultOptions;
+    options.id = "DisplayActions2e-selective-show";
+    options.template = `modules/${moduleId}/templates/selectiveshow.html`;
+    (_a = options.classes) == null ? void 0 : _a.push("selective-show");
+    options.height = 300;
+    options.width = 250;
+    options.minimizable = true;
+    options.resizable = true;
+    options.title = game.i18n.localize("selectiveshow.SelectiveShow");
+    return options;
+  }
+  async getData() {
+    let data = await super.getData();
+    data.users = game.users.filter((u) => u.active && u.data.id != game.user.id);
+    return data;
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find(".show").click((ev) => {
+      var _a;
+      ev.preventDefault();
+      this._updateObject();
+      (_a = game.socket) == null ? void 0 : _a.emit(socketEvent, {
+        operation: "showToSelection",
+        state: this.displayActionState,
+        user: game.userId,
+        userList: this.userNameList
+      });
+      this.close();
+    });
+    html.find(".show-all").click((ev) => {
+      var _a;
+      ev.preventDefault();
+      this._updateObject();
+      (_a = game.socket) == null ? void 0 : _a.emit(socketEvent, {
+        operation: "showToAll",
+        state: this.displayActionState,
+        user: game.userId
+      });
+      this.close();
+    });
+    html.find(".show-permissions").click((ev) => {
+      var _a;
+      ev.preventDefault();
+      this._updateObject();
+      this.displayActionState.userListPermissions = this.userNameList;
+      (_a = game.socket) == null ? void 0 : _a.emit(socketEvent, {
+        operation: "showWithPermission",
+        state: this.displayActionState,
+        user: game.userId,
+        userList: this.userNameList
+      });
+      this.close();
+    });
+  }
+  _updateObject() {
+    let selector = Array.from(
+      document.getElementsByClassName("selective-show-form")[0].children[0].children[0].children[0].children
+    );
+    this.userNameList = selector.map((element) => {
+      if (element.selected) {
+        return element.value;
+      }
+      return "";
+    });
+    let activeUserId = game.userId;
+    if (activeUserId) {
+      if (!this.userNameList.includes(activeUserId)) {
+        this.userNameList.push(activeUserId);
+      }
+    }
+    return new Promise(() => {
+    });
+  }
+  _handleShowPlayers(state) {
+    this.render(true);
+    this.displayActionState = state;
+  }
+}
+class DisplayActions2e extends Application {
+  constructor(newState, linked = false) {
+    var _a;
+    super();
+    this.clickString = "symbolClick";
+    this.actionImage = "/systems/pf2e/icons/actions/OneAction.webp";
+    this.reactionImage = "/systems/pf2e/icons/actions/Reaction.webp";
+    this.defaultNumOfActions = 3;
+    this.defaultNumOfReactions = 1;
+    this.isLinkedToActor = false;
+    this.state = {
+      numOfActions: this.defaultNumOfActions,
+      numOfReactions: this.defaultNumOfReactions,
+      classNameListActions: Array.from({ length: this.defaultNumOfActions }, () => "symbol"),
+      classNameListReactions: Array.from({ length: this.defaultNumOfReactions }, () => "symbol"),
+      sentFromUserId: String(game.userId),
+      userListPermissions: [String(game.userId)]
+    };
+    this.showPlayerHandler = new SelectiveShowApp([String((_a = game.user) == null ? void 0 : _a.data.name)], this.state);
+    this.isLinkedToActor = linked;
+    if (newState) {
+      this.state = newState;
+    }
+  }
+  get title() {
+    var _a, _b;
+    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+    let name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
+      return user.data._id === this.state.sentFromUserId;
+    })) == null ? void 0 : _b.data.name;
+    return title.concat(" sent from ", String(name2));
+  }
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "DisplayActions2e",
+      template: `modules/${moduleId}/templates/result.hbs`,
+      width: 600,
+      height: 200,
+      resizable: true,
+      title: "DisplayActions2e.WindowTitle"
+    });
+  }
+  getData() {
+    this.updateState();
+    return {
+      numOfActions: this.state.numOfActions,
+      numOfReactions: this.state.numOfReactions,
+      actionImagePayload: this.buildHandlebarPayload(
+        this.state.numOfActions,
+        { actionImage: this.actionImage },
+        this.state.classNameListActions
+      ),
+      reactionImagePayload: this.buildHandlebarPayload(
+        this.state.numOfReactions,
+        { reactionImage: this.reactionImage },
+        this.state.classNameListReactions
+      ),
+      isLinkedToActor: this.isLinkedToActor
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    if (this.state.userListPermissions.includes(String(game.userId))) {
+      html.find("img.symbol").on("click", this._onClickSymbolImage.bind(this));
+      html.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this));
+      html.find("button.actorLink").on("click", DataWrapper2e.createApplications.bind(DataWrapper2e));
+    }
+  }
+  _onClickSymbolImage(event) {
+    event.preventDefault();
+    const image = event.currentTarget;
+    if (image === void 0 || image === null) {
+      return;
+    }
+    image.classList.toggle(this.clickString);
+    const pos = parseInt(image.id.slice(1));
+    switch (image.id.charAt(0)) {
+      case "a":
+        this.state.classNameListActions[pos] = image.className;
+        break;
+      case "r":
+        this.state.classNameListReactions[pos] = image.className;
+        break;
+      default:
+        console.error(`${moduleId} handled Image onClicks wrong.`);
+    }
+    this.emitUpdate();
+  }
+  buildHandlebarPayload(iterator, imageObj, state) {
+    let payload = [];
+    for (let index = 0; index < iterator; index++) {
+      payload.push(foundry.utils.mergeObject({ number: index, cssClass: state[index] }, imageObj));
+    }
+    return payload;
+  }
+  _onChangeCountNumber(event) {
+    event.preventDefault();
+    const input = event.currentTarget;
+    const value = parseInt(input.value);
+    if (!isNaN(value)) {
+      if (value >= 0) {
+        switch (input.id) {
+          case "count-action":
+            this.state.numOfActions = value;
+            break;
+          case "count-reaction":
+            this.state.numOfReactions = value;
+            break;
+          default:
+            console.error(`${moduleId} incorrectly handled number of actions!`);
+        }
+        this.render();
+        this.emitUpdate();
+      }
+    }
+  }
+  _getHeaderButtons() {
+    const buttons = super._getHeaderButtons();
+    const headerButton = {
+      label: "JOURNAL.ActionShow",
+      class: "share-image",
+      icon: "fas fa-eye",
+      onclick: () => this.showPlayerHandler._handleShowPlayers(this.state)
+    };
+    buttons.unshift(headerButton);
+    return buttons;
+  }
+  updateState() {
+    if (this.state.classNameListActions.length < this.state.numOfActions) {
+      const tmp = Array.from(
+        { length: this.state.numOfActions - this.state.classNameListActions.length },
+        () => "symbol"
+      );
+      this.state.classNameListActions = this.state.classNameListActions.concat(tmp);
+    } else if (this.state.classNameListActions.length > this.state.numOfActions) {
+      const cut_value = this.state.classNameListActions.length - this.state.numOfActions;
+      this.state.classNameListActions = this.state.classNameListActions.slice(0, cut_value);
+    }
+    if (this.state.classNameListReactions.length < this.state.numOfReactions) {
+      const tmp = Array.from(
+        { length: this.state.numOfReactions - this.state.classNameListReactions.length },
+        () => "symbol"
+      );
+      this.state.classNameListReactions = this.state.classNameListReactions.concat(tmp);
+    } else if (this.state.classNameListReactions.length > this.state.numOfReactions) {
+      const cut_value = this.state.classNameListReactions.length - this.state.numOfReactions;
+      this.state.classNameListReactions = this.state.classNameListReactions.slice(0, cut_value);
+    }
+  }
+  emitUpdate() {
+    var _a;
+    (_a = game.socket) == null ? void 0 : _a.emit(socketEvent, {
+      operation: "update",
+      state: this.state,
+      user: game.userId
+    });
+  }
+  setState(newState) {
+    this.state = newState;
+  }
+}
+function handleShowToAll(data) {
+  const dialog = checkForApp(data);
+  dialog.render(true, { id: `DisplayActions2e${data.user}` });
+}
+function handleShowToSelection(data) {
+  var _a;
+  if ((_a = data.userList) == null ? void 0 : _a.includes(String(game.userId))) {
+    const dialog = checkForApp(data);
+    dialog.render(true, { id: `DisplayActions2e${data.user}` });
+  }
+}
+function handleShowWithPermission(data) {
+  handleShowToSelection(data);
+}
+function handleUpdate(data) {
+  var _a, _b;
+  let module2 = game.modules.get(moduleId);
+  let nameInTitle = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
+    return user.data._id === data.state.sentFromUserId;
+  })) == null ? void 0 : _b.data.name;
+  if (nameInTitle) {
+    module2.displayActions2e.forEach((app) => {
+      if (app.title.includes(nameInTitle) || data.state.sentFromUserId === game.userId) {
+        app.setState(data.state);
+        app.render(false, { id: `DisplayActions2e${data.user}` });
+      }
+    });
+  }
+}
+function checkForApp(data) {
+  var _a, _b;
+  let module2 = game.modules.get(moduleId);
+  let nameInTitle = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
+    return user.data._id === data.state.sentFromUserId;
+  })) == null ? void 0 : _b.data.name;
+  let newApp = new DisplayActions2e(data.state);
+  if (nameInTitle) {
+    let app = module2.displayActions2e.find((app2) => {
+      return app2.title.includes(nameInTitle);
+    });
+    if (app) {
+      newApp = app;
+    } else {
+      module2.displayActions2e.push(newApp);
+    }
+  }
+  return newApp;
+}
+let module;
+let homeDisplayActions;
+Hooks.once("init", () => {
+  console.log(`Initializing ${moduleId}`);
+});
+Hooks.on("getSceneControlButtons", (hudButtons) => {
+  var _a;
+  let hud = hudButtons.find((value) => {
+    return value.name === "token";
+  });
+  let tool = {
+    name: "DisplayActions2e.ButtonName",
+    title: "DisplayActions2e.ButtonHint",
+    icon: "fa fa-angle-double-right",
+    button: true,
+    visible: true,
+    onClick: async () => {
+      var _a2;
+      homeDisplayActions.render(true);
+      (_a2 = game.socket) == null ? void 0 : _a2.emit("module.DisplayActions2e", { event: "DisplayActions2e" });
+    }
+  };
+  (_a = hud == null ? void 0 : hud.tools) == null ? void 0 : _a.push(tool);
+});
+Hooks.on("ready", () => {
+  var _a;
+  module = game.modules.get(moduleId);
+  homeDisplayActions = new DisplayActions2e();
+  module.displayActions2e = [homeDisplayActions];
+  (_a = game.socket) == null ? void 0 : _a.on(socketEvent, (data) => {
+    switch (data.operation) {
+      case "showToAll":
+        handleShowToAll(data);
+        break;
+      case "showToSelection":
+        handleShowToSelection(data);
+        break;
+      case "showWithPermission":
+        handleShowWithPermission(data);
+        break;
+      case "update":
+        handleUpdate(data);
+        break;
+      default:
+        console.log(data);
+        break;
+    }
+  });
+});
+//# sourceMappingURL=module.js.map
