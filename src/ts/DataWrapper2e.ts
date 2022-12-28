@@ -1,5 +1,5 @@
 import {TokenDocumentPF2e} from '../../types/src/module/token-document';
-import {DisplayTokenActions2e} from './apps/displayTokenActions';
+import {DisplayActions2e} from './apps/displayActions';
 
 export class DataWrapper2e {
   /*private conditions = {
@@ -17,9 +17,10 @@ export class DataWrapper2e {
 
   public static createApplications() {
     canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
-      let app = new DisplayTokenActions2e(token.data._id);
-      // let app = new DisplayActions2e();
+      // let app = new DisplayTokenActions2e(token.data._id);
+      let app = new DisplayActions2e();
       app.render(true);
+      console.log(token);
     });
   }
 }

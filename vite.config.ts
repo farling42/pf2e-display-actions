@@ -2,8 +2,10 @@ import * as fsPromises from 'fs/promises';
 import copy from 'rollup-plugin-copy';
 import scss from 'rollup-plugin-scss';
 import {defineConfig, Plugin} from 'vite';
-import {resolve} from 'path';
+import {resolve as pathResolve} from 'path';
 import {svelte} from '@sveltejs/vite-plugin-svelte';
+import checker from 'vite-plugin-checker';
+import commonjs from '@rollup/plugin-commonjs';
 
 import './src/styles/module.css';
 import './src/styles/styles.css';
@@ -20,8 +22,8 @@ console.log(process.env.VSCODE_INJECTION);
 const config = defineConfig({
   root: 'src/',
   base: `/modules/${projectName}/`,
-  // publicDir: path.resolve(__dirname, 'public'),
-  publicDir: resolve(__dirname, 'public'),
+  // publicDir: path.pathResolve(__dirname, 'public'),
+  publicDir: pathResolve(__dirname, 'public'),
   server: {
     port: 30001,
     open: true,
@@ -33,13 +35,13 @@ const config = defineConfig({
       },
     },
   },
-  optimizeDeps: {
-    // exclude: ['@sveltejs/vite-plugin-svelte'],
-    include: ['jszip'],
-  },
+  // optimizeDeps: {
+  //   // exclude: ['@sveltejs/vite-plugin-svelte'],
+  //   include: ['jszip'],
+  // },
   build: {
-    // outDir: path.resolve(__dirname, 'dist'),
-    outDir: resolve(__dirname, 'dist'),
+    // outDir: path.pathResolve(__dirname, 'dist'),
+    outDir: pathResolve(__dirname, 'dist'),
     sourcemap: true,
     emptyOutDir: true,
     reportCompressedSize: true,
@@ -52,28 +54,43 @@ const config = defineConfig({
     },
     lib: {
       name: projectName,
-      // entry: path.resolve(__dirname, 'src/ts/module.ts'),
-      entry: resolve(__dirname, 'src/ts/module.ts'),
+      // entry: path.pathResolve(__dirname, 'src/ts/module.ts'),
+      entry: pathResolve(__dirname, 'src/ts/module.ts'),
       formats: ['es'],
       fileName: 'scripts/module',
     },
     rollupOptions: {
       input: {
-        // index: path.resolve(__dirname, 'src/ts/module.ts'),
-        index: resolve(__dirname, 'src/ts/module.ts'),
+        index: pathResolve(__dirname, 'src/ts/module.ts'),
       },
       treeshake: true,
+      preserveEntrySignatures: 'strict',
       output: {
-        extend: true,
+        // generatedCode: 'es5',
+        // extend: true,
+        // preserveModules: true,
+        // dynamicImportInCjs: true,
+        // externalImportAssertions: true,
+        esModule: true,
         // file: path.resolve(__dirname, 'dist/scripts/module.js'),
         // file: resolve(__dirname, 'dist/scripts/module.js'),
-        dir: resolve(__dirname, 'dist'),
+        dir: 'dist',
         format: 'es',
+        interop: 'auto',
       },
     },
   },
   plugins: [
     updateModuleManifestPlugin(),
+    svelte({
+      configFile: '../svelte.config.cjs', // relative to src/
+    }),
+    checker({
+      typescript: true,
+    }),
+    commonjs({
+      transformMixedEsModules: true,
+    }),
     scss({
       fileName: 'style.css',
       // output: 'dist/style.css',
@@ -88,9 +105,6 @@ const config = defineConfig({
         {src: 'src/images', dest: 'dist'},
       ],
       hook: 'writeBundle',
-    }),
-    svelte({
-      configFile: '../svelte.config.cjs', // relative to src/
     }),
   ],
 });

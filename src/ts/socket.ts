@@ -36,6 +36,12 @@ export function handleUpdate(data: EmitData) {
   }
 }
 
+export function handleToken(data: EmitData) {
+  console.log(data);
+  const dialog = checkForApp(data);
+  dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
+}
+
 /**
  * helper function to return the application from the modules or build a new one
  * immediatly pushes a new app into the list of modules

@@ -38,6 +38,7 @@ Hooks.on('getSceneControlButtons', (hudButtons: SceneControl[]) => {
 Hooks.on('ready', () => {
   module = game.modules.get(moduleId) as unknown as MyModule;
   homeDisplayActions = new DisplayActions2e();
+
   module.displayActions2e = [homeDisplayActions];
   // sockets
   game.socket?.on(socketEvent, (data: EmitData) => {

@@ -1,19 +1,29 @@
 // rollup.config.js
-import typescript from '@rollup/plugin-typescript';
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 
 export default {
-  input: '/src/ts/module.ts',
+  input: {
+    // index: path.resolve(__dirname, 'src/ts/module.ts'),
+    index: '/src/ts/module.ts',
+  },
+  treeshake: true,
+  preserveEntrySignatures: 'strict',
   output: {
-    file: 'dist/scripts/module.js',
-    format: 'es'
+    // generatedCode: 'es5',
+    // extend: true,
+    // preserveModules: true,
+    // dynamicImportInCjs: true,
+    // externalImportAssertions: true,
+    esModule: true,
+    // file: path.resolve(__dirname, 'dist/scripts/module.js'),
+    // file: resolve(__dirname, 'dist/scripts/module.js'),
+    dir: "dist",
+    format: 'es',
+    interop: 'auto',
   },
   plugins: [
-    typescript(), 
     json(),
-    resolve(),
     commonjs({
       transformMixedEsModules: true
     })]

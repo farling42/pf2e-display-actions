@@ -1,5 +1,6 @@
+import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
 import {moduleId, socketEvent} from '../constants';
-import {DataWrapper2e} from '../DataWrapper2e';
+import {handleToken} from '../socket';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
 
@@ -18,13 +19,14 @@ export class DisplayActions2e extends Application {
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
     sentFromUserId: String(game.userId),
     userListPermissions: [String(game.userId)],
+    tokenId: undefined,
+    isLinkedToToken: this.isLinkedToActor,
   };
 
   protected showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String(game.user?.data.name)], this.state);
 
-  constructor(newState?: DisplayActions2eData, linked = false) {
+  constructor(newState?: DisplayActions2eData) {
     super();
-    this.isLinkedToActor = linked;
 
     if (newState) {
       this.state = newState;
@@ -32,16 +34,11 @@ export class DisplayActions2e extends Application {
   }
 
   override get title(): string {
-    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
+    if (this.state.isLinkedToToken) {
+      return this.getTitleToken();
+    } else {
+      return this.getTitlePlayer();
     }
-
-    let name = game.users?.find(user => {
-      return user.data._id === this.state.sentFromUserId;
-    })?.data.name;
-
-    return title.concat(' sent from ', String(name));
   }
 
   static override get defaultOptions(): ApplicationOptions {
@@ -71,7 +68,7 @@ export class DisplayActions2e extends Application {
         {reactionImage: this.reactionImage},
         this.state.classNameListReactions,
       ),
-      isLinkedToActor: this.isLinkedToActor,
+      isLinkedToActor: this.state.isLinkedToToken,
     };
   }
 
@@ -81,8 +78,8 @@ export class DisplayActions2e extends Application {
     if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
-      html.find('button.actorLink').on('click', DataWrapper2e.createApplications.bind(DataWrapper2e));
-      // html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
+      // html.find('button.actorLink').on('click', DataWrapper2e.createApplications);
+      html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
     }
   }
 
@@ -204,5 +201,62 @@ export class DisplayActions2e extends Application {
 
   public setState(newState: DisplayActions2eData) {
     this.state = newState;
+  }
+
+  /**
+   * The following functions are only done because transpilation is bullying me and thus i cannot do an child of this class
+   */
+
+  private getTitlePlayer(): string {
+    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+
+    let name = game.users?.find(user => {
+      return user.data._id === this.state.sentFromUserId;
+    })?.data.name;
+
+    return title.concat(' sent from ', String(name));
+  }
+
+  private getTitleToken(): string {
+    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+
+    let name = (canvas as Canvas).tokens.get(this.state.tokenId as string);
+    title = title.concat(' for ', String(name?.data.name));
+
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+
+    name = game.users?.find(user => {
+      return user.data._id === this.state.sentFromUserId;
+    })?.data.name;
+
+    return title.concat(' sent from ', String(name));
+  }
+
+  private _onButtonClickSelectedActors(event: Event) {
+    console.log(event);
+
+    canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
+      // let app = new DisplayTokenActions2e(token.data._id);
+
+      let newState = this.state;
+      newState.isLinkedToToken = true;
+      newState.tokenId = token.data._id;
+
+      /*game.socket?.emit(socketEvent, {
+        operation: 'token',
+        state: newState,
+        user: game.userId,
+      } as EmitData);*/
+      handleToken({
+        operation: 'token',
+        state: newState,
+        user: game.userId,
+      } as EmitData);
+    });
   }
 }

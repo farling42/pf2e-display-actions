@@ -2,63 +2,6 @@ const module$1 = "";
 const name = "pf2e-display-actions";
 const moduleId = name;
 const socketEvent = `module.${moduleId}`;
-class DisplayTokenActions2e extends DisplayActions2e {
-  constructor(tokenId, newState) {
-    super(newState);
-    this.isLinkedToActor = true;
-    this.tokenId = tokenId;
-    console.log(this.tokenId);
-  }
-  get title() {
-    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
-    }
-    let name2 = canvas.data.tokens.find((token) => {
-      return token.data._id === this.tokenId;
-    });
-    return title.concat(" for ", String(name2));
-  }
-  activateListeners(html) {
-    super.activateListeners(html);
-    if (this.state.userListPermissions.includes(String(game.userId))) {
-      html.find("img.symbol").on("click", this._onClickSymbolImage.bind(this));
-      html.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this));
-    }
-  }
-  getData() {
-    this.updateState();
-    return {
-      numOfActions: this.state.numOfActions,
-      numOfReactions: this.state.numOfReactions,
-      actionImagePayload: this.buildHandlebarPayload(
-        this.state.numOfActions,
-        { actionImage: this.actionImage },
-        this.state.classNameListActions
-      ),
-      reactionImagePayload: this.buildHandlebarPayload(
-        this.state.numOfReactions,
-        { reactionImage: this.reactionImage },
-        this.state.classNameListReactions
-      ),
-      isLinkedToActor: this.isLinkedToActor
-    };
-  }
-}
-class DataWrapper2e {
-  static getData() {
-    let numOfActions = 3;
-    let numOfReactions = 1;
-    canvas.tokens.controlled;
-    return [numOfActions, numOfReactions];
-  }
-  static createApplications() {
-    canvas.tokens.controlled.forEach((token) => {
-      let app = new DisplayTokenActions2e(token.data._id);
-      app.render(true);
-    });
-  }
-}
 class SelectiveShowApp extends FormApplication {
   constructor(users, state) {
     super(users);
@@ -147,7 +90,7 @@ class SelectiveShowApp extends FormApplication {
   }
 }
 class DisplayActions2e extends Application {
-  constructor(newState, linked = false) {
+  constructor(newState) {
     var _a;
     super();
     this.clickString = "symbolClick";
@@ -162,24 +105,21 @@ class DisplayActions2e extends Application {
       classNameListActions: Array.from({ length: this.defaultNumOfActions }, () => "symbol"),
       classNameListReactions: Array.from({ length: this.defaultNumOfReactions }, () => "symbol"),
       sentFromUserId: String(game.userId),
-      userListPermissions: [String(game.userId)]
+      userListPermissions: [String(game.userId)],
+      tokenId: void 0,
+      isLinkedToToken: this.isLinkedToActor
     };
     this.showPlayerHandler = new SelectiveShowApp([String((_a = game.user) == null ? void 0 : _a.data.name)], this.state);
-    this.isLinkedToActor = linked;
     if (newState) {
       this.state = newState;
     }
   }
   get title() {
-    var _a, _b;
-    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
+    if (this.state.isLinkedToToken) {
+      return this.getTitleToken();
+    } else {
+      return this.getTitlePlayer();
     }
-    let name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
-      return user.data._id === this.state.sentFromUserId;
-    })) == null ? void 0 : _b.data.name;
-    return title.concat(" sent from ", String(name2));
   }
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -206,7 +146,7 @@ class DisplayActions2e extends Application {
         { reactionImage: this.reactionImage },
         this.state.classNameListReactions
       ),
-      isLinkedToActor: this.isLinkedToActor
+      isLinkedToActor: this.state.isLinkedToToken
     };
   }
   activateListeners(html) {
@@ -214,7 +154,7 @@ class DisplayActions2e extends Application {
     if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find("img.symbol").on("click", this._onClickSymbolImage.bind(this));
       html.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this));
-      html.find("button.actorLink").on("click", DataWrapper2e.createApplications.bind(DataWrapper2e));
+      html.find("button.actorLink").on("click", this._onButtonClickSelectedActors.bind(this));
     }
   }
   _onClickSymbolImage(event) {
@@ -309,6 +249,43 @@ class DisplayActions2e extends Application {
   setState(newState) {
     this.state = newState;
   }
+  getTitlePlayer() {
+    var _a, _b;
+    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+    let name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
+      return user.data._id === this.state.sentFromUserId;
+    })) == null ? void 0 : _b.data.name;
+    return title.concat(" sent from ", String(name2));
+  }
+  getTitleToken() {
+    var _a, _b;
+    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
+    let name2 = canvas.tokens.get(this.state.tokenId);
+    title = title.concat(" for ", String(name2 == null ? void 0 : name2.data.name));
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+    name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
+      return user.data._id === this.state.sentFromUserId;
+    })) == null ? void 0 : _b.data.name;
+    return title.concat(" sent from ", String(name2));
+  }
+  _onButtonClickSelectedActors(event) {
+    console.log(event);
+    canvas.tokens.controlled.forEach((token) => {
+      let newState = this.state;
+      newState.isLinkedToToken = true;
+      newState.tokenId = token.data._id;
+      handleToken({
+        operation: "token",
+        state: newState,
+        user: game.userId
+      });
+    });
+  }
 }
 function handleShowToAll(data) {
   const dialog = checkForApp(data);
@@ -338,6 +315,11 @@ function handleUpdate(data) {
       }
     });
   }
+}
+function handleToken(data) {
+  console.log(data);
+  const dialog = checkForApp(data);
+  dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
 function checkForApp(data) {
   var _a, _b;
