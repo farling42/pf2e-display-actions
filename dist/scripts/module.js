@@ -298,8 +298,9 @@ class DisplayActions2e extends Application {
     this.render();
   }
   generateActionsFromConditions(oldState) {
+    var _a;
     let newState = oldState;
-    let actor = game.actors.tokens[oldState.tokenId];
+    let actor = ((_a = canvas.tokens.get(oldState.tokenId)) == null ? void 0 : _a.document).actor;
     console.log(actor);
     console.log(oldState);
     let conditions = actor.conditions;
@@ -352,7 +353,7 @@ function handleToken(data) {
   dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
 function checkForApp(data) {
-  var _a, _b;
+  var _a, _b, _c;
   let module2 = game.modules.get(moduleId);
   let nameInTitle = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
     return user.data._id === data.state.sentFromUserId;
@@ -369,7 +370,7 @@ function checkForApp(data) {
     }
   }
   if (data.state.isLinkedToToken && data.state.tokenId) {
-    let tokenInTitle = game.actors.tokens[data.state.tokenId].name;
+    let tokenInTitle = ((_c = canvas.tokens.get(data.state.tokenId)) == null ? void 0 : _c.document).actor.name;
     let app = module2.displayActions2e.find((app2) => {
       return app2.title.includes(tokenInTitle);
     });

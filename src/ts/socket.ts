@@ -1,4 +1,5 @@
 import {ActorPF2e} from '../../types/src/module/actor';
+import {TokenDocumentPF2e} from '../../types/src/module/token-document';
 import {DisplayActions2e} from './apps/displayActions';
 import {moduleId} from './constants';
 import {EmitData, MyModule} from './types';
@@ -70,7 +71,9 @@ function checkForApp(data: EmitData): DisplayActions2e {
   }
 
   if (data.state.isLinkedToToken && data.state.tokenId) {
-    let tokenInTitle = (game.actors.tokens[data.state.tokenId] as ActorPF2e).name;
+    let tokenInTitle = (
+      ((canvas as Canvas).tokens.get(data.state.tokenId)?.document as TokenDocumentPF2e).actor as ActorPF2e
+    ).name;
     let app = module.displayActions2e.find(app => {
       return app.title.includes(tokenInTitle);
     });

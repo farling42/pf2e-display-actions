@@ -268,7 +268,9 @@ export class DisplayActions2e extends Application {
 
   private generateActionsFromConditions(oldState: DisplayActions2eData): DisplayActions2eData {
     let newState = oldState;
-    let actor = game.actors.tokens[oldState.tokenId!] as ActorPF2e;
+
+    let actor = ((canvas as Canvas).tokens.get(oldState.tokenId!)?.document as TokenDocumentPF2e).actor as ActorPF2e;
+    // let actor = game.actors.tokens[oldState.tokenId!] as ActorPF2e;
     console.log(actor);
     console.log(oldState);
 
