@@ -246,7 +246,7 @@ export class DisplayActions2e extends Application {
     canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
       // let app = new DisplayTokenActions2e(token.data._id);
 
-      let newState = this.state;
+      let newState = foundry.utils.deepClone(this.state);
       newState.isLinkedToToken = true;
       newState.tokenId = token.data._id;
       newState = this.generateActionsFromConditions(newState);

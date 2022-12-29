@@ -281,7 +281,7 @@ class DisplayActions2e extends Application {
   _onButtonClickSelectedActors(event) {
     console.log(event);
     canvas.tokens.controlled.forEach((token) => {
-      let newState = this.state;
+      let newState = foundry.utils.deepClone(this.state);
       newState.isLinkedToToken = true;
       newState.tokenId = token.data._id;
       newState = this.generateActionsFromConditions(newState);
