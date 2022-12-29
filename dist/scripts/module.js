@@ -2,6 +2,10 @@ const module$1 = "";
 const name = "pf2e-display-actions";
 const moduleId = name;
 const socketEvent = `module.${moduleId}`;
+const condtionModifierTable = {
+  slowed: -1,
+  quickened: 1
+};
 class SelectiveShowApp extends FormApplication {
   constructor(users, state) {
     super(users);
@@ -155,6 +159,7 @@ class DisplayActions2e extends Application {
       html.find("img.symbol").on("click", this._onClickSymbolImage.bind(this));
       html.find("input.input-counter").on("change", this._onChangeCountNumber.bind(this));
       html.find("button.actorLink").on("click", this._onButtonClickSelectedActors.bind(this));
+      html.find("button.actorUpdate").on("click", this._onButtonClickUpdateActors.bind(this));
     }
   }
   _onClickSymbolImage(event) {
@@ -279,12 +284,37 @@ class DisplayActions2e extends Application {
       let newState = this.state;
       newState.isLinkedToToken = true;
       newState.tokenId = token.data._id;
+      newState = this.generateActionsFromConditions(newState);
       handleToken({
         operation: "token",
         state: newState,
         user: game.userId
       });
     });
+  }
+  _onButtonClickUpdateActors(event) {
+    console.log(event);
+    this.state = this.generateActionsFromConditions(this.state);
+    this.render();
+  }
+  generateActionsFromConditions(oldState) {
+    let newState = oldState;
+    let actor = game.actors.tokens[oldState.tokenId];
+    console.log(actor);
+    console.log(oldState);
+    let conditions = actor.conditions;
+    let baseActions = 3;
+    let baseReactions = 1;
+    conditions.forEach((condition) => {
+      let slug = condition.system.slug;
+      if (condtionModifierTable[slug]) {
+        let valMod = condition.system.value.isValued ? condition.value : 1;
+        baseActions += condtionModifierTable[slug] * valMod;
+      }
+    });
+    newState.numOfActions = baseActions;
+    newState.numOfReactions = baseReactions;
+    return newState;
   }
 }
 function handleShowToAll(data) {
@@ -331,6 +361,17 @@ function checkForApp(data) {
   if (nameInTitle) {
     let app = module2.displayActions2e.find((app2) => {
       return app2.title.includes(nameInTitle);
+    });
+    if (app) {
+      newApp = app;
+    } else {
+      module2.displayActions2e.push(newApp);
+    }
+  }
+  if (data.state.isLinkedToToken && data.state.tokenId) {
+    let tokenInTitle = game.actors.tokens[data.state.tokenId].name;
+    let app = module2.displayActions2e.find((app2) => {
+      return app2.title.includes(tokenInTitle);
     });
     if (app) {
       newApp = app;

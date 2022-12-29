@@ -1,3 +1,4 @@
+import {ActorPF2e} from '../../types/src/module/actor';
 import {DisplayActions2e} from './apps/displayActions';
 import {moduleId} from './constants';
 import {EmitData, MyModule} from './types';
@@ -60,6 +61,19 @@ function checkForApp(data: EmitData): DisplayActions2e {
       return app.title.includes(nameInTitle!);
     });
 
+    if (app) {
+      newApp = app;
+    } else {
+      // push into list to wait for updates
+      module.displayActions2e.push(newApp);
+    }
+  }
+
+  if (data.state.isLinkedToToken && data.state.tokenId) {
+    let tokenInTitle = (game.actors.tokens[data.state.tokenId] as ActorPF2e).name;
+    let app = module.displayActions2e.find(app => {
+      return app.title.includes(tokenInTitle);
+    });
     if (app) {
       newApp = app;
     } else {

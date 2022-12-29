@@ -7,6 +7,9 @@
         <input class="input-counter" id="count-reaction" name="num-reaction" type="number" value="{{this.numOfReactions}}">
         <button class="actorLink" id="actorLink">Link to selected Actors</button>
     {{/unless}} 
+    {{#if isLinkedToActor}}
+        <button class="actorUpdate" id="actorUpdate">Update</button>
+    {{/if}}
     </section>
     <section class="flexbox-actions">
         <section class="actions">

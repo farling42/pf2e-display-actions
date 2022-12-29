@@ -24,3 +24,7 @@ export interface DisplayActions2eData {
   tokenId?: string;
   isLinkedToToken?: boolean;
 }
+
+export interface ConditionModifierDictionary {
+  [key: string]: number;
+}

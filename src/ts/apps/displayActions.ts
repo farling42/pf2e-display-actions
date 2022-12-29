@@ -1,5 +1,7 @@
+import {ActorPF2e} from '../../../types/src/module/actor';
+import {ConditionPF2e} from '../../../types/src/module/item';
 import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
-import {moduleId, socketEvent} from '../constants';
+import {condtionModifierTable, moduleId, socketEvent} from '../constants';
 import {handleToken} from '../socket';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
@@ -80,6 +82,7 @@ export class DisplayActions2e extends Application {
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
       // html.find('button.actorLink').on('click', DataWrapper2e.createApplications);
       html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
+      html.find('button.actorUpdate').on('click', this._onButtonClickUpdateActors.bind(this));
     }
   }
 
@@ -168,7 +171,7 @@ export class DisplayActions2e extends Application {
       );
       this.state.classNameListActions = this.state.classNameListActions.concat(tmp);
     }
-    // too many elements,we remove the last elements
+    // too many elements, we remove the last elements
     else if (this.state.classNameListActions.length > this.state.numOfActions) {
       const cut_value = this.state.classNameListActions.length - this.state.numOfActions;
       this.state.classNameListActions = this.state.classNameListActions.slice(0, cut_value);
@@ -246,17 +249,45 @@ export class DisplayActions2e extends Application {
       let newState = this.state;
       newState.isLinkedToToken = true;
       newState.tokenId = token.data._id;
+      newState = this.generateActionsFromConditions(newState);
 
-      /*game.socket?.emit(socketEvent, {
-        operation: 'token',
-        state: newState,
-        user: game.userId,
-      } as EmitData);*/
       handleToken({
         operation: 'token',
         state: newState,
         user: game.userId,
       } as EmitData);
     });
+  }
+
+  private _onButtonClickUpdateActors(event: Event) {
+    console.log(event);
+
+    this.state = this.generateActionsFromConditions(this.state);
+    this.render();
+  }
+
+  private generateActionsFromConditions(oldState: DisplayActions2eData): DisplayActions2eData {
+    let newState = oldState;
+    let actor = game.actors.tokens[oldState.tokenId!] as ActorPF2e;
+    console.log(actor);
+    console.log(oldState);
+
+    let conditions = actor.conditions as ConditionPF2e[];
+    let baseActions = 3;
+    let baseReactions = 1;
+
+    conditions.forEach(condition => {
+      let slug: string = condition.system.slug;
+      if (condtionModifierTable[slug]) {
+        let valMod = condition.system.value.isValued ? condition.value! : 1;
+
+        baseActions += condtionModifierTable[slug!] * valMod;
+      }
+    });
+
+    newState.numOfActions = baseActions;
+    newState.numOfReactions = baseReactions;
+
+    return newState;
   }
 }
