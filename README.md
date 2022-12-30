@@ -9,11 +9,11 @@ Click on this Button in the actors tab. ![Button in the actors tab](usage.png)
 This should get you your action display ![action display dialog](dialog.png)
 
 ## Changelog
-v 1.5.0
-added Show woth Permissions button for colaboration 
-v 1.6.0
-added ability to connect a app window with a token
-added basic handling of conditions related to actions
+#### v 1.5.0
+- added Show woth Permissions button for colaboration 
+#### v 1.6.0
+- added ability to connect a app window with a token
+- added basic handling of conditions related to actions
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
 - beautify the Dialog
