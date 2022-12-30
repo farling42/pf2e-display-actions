@@ -44,6 +44,15 @@ export function handleToken(data: EmitData) {
   dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
 }
 
+export function handleDuplication(data: EmitData) {
+  console.log(data);
+  const dialog = new DisplayActions2e(data.state);
+  const module = game.modules.get(moduleId) as unknown as MyModule;
+  dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
+  // push into list to wait for updates
+  module.displayActions2e.push(dialog);
+}
+
 /**
  * helper function to return the application from the modules or build a new one
  * immediatly pushes a new app into the list of modules
@@ -58,8 +67,13 @@ function checkForApp(data: EmitData): DisplayActions2e {
   let newApp: DisplayActions2e = new DisplayActions2e(data.state);
 
   if (nameInTitle) {
+    let dup = '';
+    if (data.state.duplicationNr > 0) {
+      dup = '(' + String(data.state.duplicationNr) + ')';
+    }
+
     let app = module.displayActions2e.find(app => {
-      return app.title.includes(nameInTitle!);
+      return app.title.includes(nameInTitle!) && app.title.includes(dup);
     });
 
     if (app) {

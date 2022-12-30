@@ -21,6 +21,7 @@ export interface DisplayActions2eData {
   classNameListReactions: string[];
   sentFromUserId: string;
   userListPermissions: string[];
+  duplicationNr: number;
   tokenId?: string;
   isLinkedToToken?: boolean;
 }

@@ -4,6 +4,7 @@
   "DisplayActions2e.ButtonHint": "Display Actions",
   "DisplayActions2e.ButtonIcon": "pf2-actions a",
   "DisplayActions2e.ShowPermissions": "Show with Permissions",
+  "DisplayActions2e.Duplication": "Duplicate",
   "selectiveshow": {
     "Show" : "Show",
     "ShowAll": "Show All",

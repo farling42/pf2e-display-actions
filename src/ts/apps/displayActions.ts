@@ -2,7 +2,7 @@ import {ActorPF2e} from '../../../types/src/module/actor';
 import {ConditionPF2e} from '../../../types/src/module/item';
 import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
 import {moduleId, socketEvent} from '../constants';
-import {actionsFromConditions, handleToken} from '../utils';
+import {actionsFromConditions, handleDuplication, handleToken} from '../utils';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
 
@@ -23,6 +23,7 @@ export class DisplayActions2e extends Application {
     userListPermissions: [String(game.userId)],
     tokenId: undefined,
     isLinkedToToken: this.isLinkedToActor,
+    duplicationNr: 0,
   };
 
   protected showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String(game.user?.data.name)], this.state);
@@ -36,11 +37,15 @@ export class DisplayActions2e extends Application {
   }
 
   override get title(): string {
+    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+
     if (this.state.isLinkedToToken) {
-      return this.getTitleToken();
-    } else {
-      return this.getTitlePlayer();
+      title = title.concat(this.getTitleToken());
     }
+
+    title = title.concat(this.getTitleSentFrom());
+    title = title.concat(this.getTitleDuplication());
+    return title;
   }
 
   static override get defaultOptions(): ApplicationOptions {
@@ -155,7 +160,16 @@ export class DisplayActions2e extends Application {
       onclick: () => this.showPlayerHandler._handleShowPlayers(this.state),
     };
 
+    const headerButtonDuplication: ApplicationHeaderButton = {
+      label: 'DisplayActions2e.Duplication',
+      class: 'duplicate-app',
+      icon: 'fa fa-clone',
+      onclick: () => this._onHeaderDuplication(),
+    };
+
     buttons.unshift(headerButton);
+    buttons.unshift(headerButtonDuplication);
+
     return buttons;
   }
 
@@ -209,37 +223,31 @@ export class DisplayActions2e extends Application {
   /**
    * The following functions are only done because transpilation is bullying me and thus i cannot do an child of this class
    */
-
-  private getTitlePlayer(): string {
-    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
-    }
-
-    title = title.concat(this.getTitleSentFrom());
-    return title;
-  }
-
   private getTitleToken(): string {
-    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+    let title = '';
 
     let name = (canvas as Canvas).tokens.get(this.state.tokenId as string);
     title = title.concat(' for ', String(name?.data.name));
-
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
-    }
-
-    title = title.concat(this.getTitleSentFrom());
     return title;
   }
 
   private getTitleSentFrom(): string {
+    if (this.state.sentFromUserId === game.userId) {
+      return '';
+    }
     let title = ' sent from ';
     let name = game.users?.find(user => {
       return user.data._id === this.state.sentFromUserId;
     })?.data.name;
     return title.concat(name);
+  }
+
+  private getTitleDuplication(): string {
+    let title = '';
+    if (this.state.duplicationNr > 0) {
+      title = title.concat(' (', String(this.state.duplicationNr), ')');
+    }
+    return title;
   }
 
   private _onButtonClickSelectedActors() {
@@ -262,6 +270,17 @@ export class DisplayActions2e extends Application {
   private _onButtonClickUpdateActors() {
     this.state = this.generateActionsFromConditions(this.state);
     this.render();
+  }
+
+  private _onHeaderDuplication() {
+    let newState = foundry.utils.deepClone(this.state);
+    newState.duplicationNr += 1;
+
+    handleDuplication({
+      operation: 'duplication',
+      state: newState,
+      user: game.userId,
+    } as EmitData);
   }
 
   private generateActionsFromConditions(oldState: DisplayActions2eData): DisplayActions2eData {
