@@ -7,4 +7,5 @@ export const socketEvent = `module.${moduleId}`;
 export const condtionModifierTable: ConditionModifierDictionary = {
   slowed: -1,
   quickened: 1,
+  stunned: 1,
 };

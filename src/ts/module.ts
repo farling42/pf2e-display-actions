@@ -3,8 +3,7 @@
 import '../styles/module.css';
 import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
-import './socket';
-import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './socket';
+import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './utils';
 import {DisplayActions2e} from './apps/displayActions';
 
 let module: MyModule;

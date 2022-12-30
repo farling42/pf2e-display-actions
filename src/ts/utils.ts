@@ -1,7 +1,8 @@
 import {ActorPF2e} from '../../types/src/module/actor';
+import {ConditionPF2e} from '../../types/src/module/item';
 import {TokenDocumentPF2e} from '../../types/src/module/token-document';
 import {DisplayActions2e} from './apps/displayActions';
-import {moduleId} from './constants';
+import {condtionModifierTable, moduleId} from './constants';
 import {EmitData, MyModule} from './types';
 
 export function handleShowToAll(data: EmitData) {
@@ -86,4 +87,27 @@ function checkForApp(data: EmitData): DisplayActions2e {
   }
 
   return newApp;
+}
+
+export function actionsFromConditions(conditions: ConditionPF2e[]): [number, number] {
+  let numOfActions = 3;
+  let numOfReactions = 1;
+
+  let stun = conditions.filter(val => {
+    return val.system.slug === 'stunned';
+  });
+  // stunned overwrites slow thus it must be handled first
+  if (stun) {
+    numOfActions = stun[0].value! * condtionModifierTable['stunned'];
+  } else {
+    conditions.forEach(condition => {
+      let slug: string = condition.system.slug;
+      if (condtionModifierTable[slug]) {
+        let valMod = condition.system.value.isValued ? condition.value! : 1;
+        numOfActions += condtionModifierTable[slug!] * valMod;
+      }
+    });
+  }
+
+  return [numOfActions, numOfReactions];
 }
