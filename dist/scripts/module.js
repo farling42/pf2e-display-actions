@@ -279,8 +279,7 @@ class DisplayActions2e extends Application {
     })) == null ? void 0 : _b.data.name;
     return title.concat(" sent from ", String(name2));
   }
-  _onButtonClickSelectedActors(event) {
-    console.log(event);
+  _onButtonClickSelectedActors() {
     canvas.tokens.controlled.forEach((token) => {
       let newState = foundry.utils.deepClone(this.state);
       newState.isLinkedToToken = true;
@@ -293,8 +292,7 @@ class DisplayActions2e extends Application {
       });
     });
   }
-  _onButtonClickUpdateActors(event) {
-    console.log(event);
+  _onButtonClickUpdateActors() {
     this.state = this.generateActionsFromConditions(this.state);
     this.render();
   }
@@ -302,8 +300,6 @@ class DisplayActions2e extends Application {
     var _a;
     let newState = oldState;
     let actor = ((_a = canvas.tokens.get(oldState.tokenId)) == null ? void 0 : _a.document).actor;
-    console.log(actor);
-    console.log(oldState);
     let conditions = actor.conditions;
     let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
     newState.numOfActions = numOfActions;

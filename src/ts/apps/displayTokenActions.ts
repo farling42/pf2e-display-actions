@@ -9,7 +9,6 @@ export class DisplayTokenActions2e extends DisplayActions2e {
     super(newState);
     this.isLinkedToActor = true;
     this.tokenId = tokenId;
-    console.log(this.tokenId);
   }
 
   override get title(): string {

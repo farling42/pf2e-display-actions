@@ -240,9 +240,7 @@ export class DisplayActions2e extends Application {
     return title.concat(' sent from ', String(name));
   }
 
-  private _onButtonClickSelectedActors(event: Event) {
-    console.log(event);
-
+  private _onButtonClickSelectedActors() {
     canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
       // let app = new DisplayTokenActions2e(token.data._id);
 
@@ -259,9 +257,7 @@ export class DisplayActions2e extends Application {
     });
   }
 
-  private _onButtonClickUpdateActors(event: Event) {
-    console.log(event);
-
+  private _onButtonClickUpdateActors() {
     this.state = this.generateActionsFromConditions(this.state);
     this.render();
   }
@@ -271,8 +267,6 @@ export class DisplayActions2e extends Application {
 
     let actor = ((canvas as Canvas).tokens.get(oldState.tokenId!)?.document as TokenDocumentPF2e).actor as ActorPF2e;
     // let actor = game.actors.tokens[oldState.tokenId!] as ActorPF2e;
-    console.log(actor);
-    console.log(oldState);
 
     let conditions = actor.conditions as Map<string, ConditionPF2e>;
 
