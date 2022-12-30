@@ -17,12 +17,12 @@ export class SelectiveShowApp extends FormApplication {
     const options = super.defaultOptions;
     options.id = 'DisplayActions2e-selective-show';
     options.template = `modules/${moduleId}/templates/selectiveshow.html`;
-    options.classes.push('selective-show');
+    options.classes?.push('selective-show');
     options.height = 300;
     options.width = 250;
     options.minimizable = true;
     options.resizable = true;
-    options.title = (game as Game).i18n.localize('selectiveshow.SelectiveShow');
+    options.title = game.i18n.localize('selectiveshow.SelectiveShow');
     return options;
   }
 
@@ -42,10 +42,10 @@ export class SelectiveShowApp extends FormApplication {
       ev.preventDefault();
       this._updateObject();
       // let selector = $(ev.currentTarget).parents('form').find('select');
-      (game as Game).socket?.emit(socketEvent, {
+      game.socket?.emit(socketEvent, {
         operation: 'showToSelection',
         state: this.displayActionState,
-        user: (game as Game).userId,
+        user: game.userId,
         userList: this.userNameList,
       } as EmitData);
       this.close();
@@ -54,10 +54,10 @@ export class SelectiveShowApp extends FormApplication {
       ev.preventDefault();
       this._updateObject();
 
-      (game as Game).socket?.emit(socketEvent, {
+      game.socket?.emit(socketEvent, {
         operation: 'showToAll',
         state: this.displayActionState,
-        user: (game as Game).userId,
+        user: game.userId,
       } as EmitData);
 
       this.close();
@@ -69,10 +69,10 @@ export class SelectiveShowApp extends FormApplication {
 
       this.displayActionState.userListPermissions = this.userNameList;
 
-      (game as Game).socket?.emit(socketEvent, {
+      game.socket?.emit(socketEvent, {
         operation: 'showWithPermission',
         state: this.displayActionState,
-        user: (game as Game).userId,
+        user: game.userId,
         userList: this.userNameList,
       } as EmitData);
 
@@ -95,7 +95,7 @@ export class SelectiveShowApp extends FormApplication {
     });
 
     // active User Id needs to be send always
-    let activeUserId = (game as Game).userId;
+    let activeUserId = game.userId;
     if (activeUserId) {
       if (!this.userNameList.includes(activeUserId)) {
         this.userNameList.push(activeUserId);

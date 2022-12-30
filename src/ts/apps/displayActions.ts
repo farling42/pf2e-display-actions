@@ -1,24 +1,31 @@
+import {ActorPF2e} from '../../../types/src/module/actor';
+import {ConditionPF2e} from '../../../types/src/module/item';
+import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
 import {moduleId, socketEvent} from '../constants';
+import {actionsFromConditions, handleToken} from '../utils';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
 
 export class DisplayActions2e extends Application {
-  private clickString = 'symbolClick';
-  private actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
-  private reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
-  private defaultNumOfActions = 3;
-  private defaultNumOfReactions = 1;
+  protected clickString = 'symbolClick';
+  protected actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
+  protected reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
+  protected defaultNumOfActions = 3;
+  protected defaultNumOfReactions = 1;
+  protected isLinkedToActor = false;
 
-  private state: DisplayActions2eData = {
+  protected state: DisplayActions2eData = {
     numOfActions: this.defaultNumOfActions,
     numOfReactions: this.defaultNumOfReactions,
     classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
-    sentFromUserId: String((game as Game).userId),
-    userListPermissions: [String((game as Game).userId)],
+    sentFromUserId: String(game.userId),
+    userListPermissions: [String(game.userId)],
+    tokenId: undefined,
+    isLinkedToToken: this.isLinkedToActor,
   };
 
-  private showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String((game as Game).user?.name)], this.state);
+  protected showPlayerHandler: SelectiveShowApp = new SelectiveShowApp([String(game.user?.data.name)], this.state);
 
   constructor(newState?: DisplayActions2eData) {
     super();
@@ -29,16 +36,11 @@ export class DisplayActions2e extends Application {
   }
 
   override get title(): string {
-    let title = (game as Game).i18n.localize('DisplayActions2e.WindowTitle');
-    if (this.state.sentFromUserId === (game as Game).userId) {
-      return title;
+    if (this.state.isLinkedToToken) {
+      return this.getTitleToken();
+    } else {
+      return this.getTitlePlayer();
     }
-
-    let name = (game as Game).users?.find(user => {
-      return user.id === this.state.sentFromUserId;
-    })?.name;
-
-    return title.concat(' sent from ', String(name));
   }
 
   static override get defaultOptions(): ApplicationOptions {
@@ -68,19 +70,23 @@ export class DisplayActions2e extends Application {
         {reactionImage: this.reactionImage},
         this.state.classNameListReactions,
       ),
+      isLinkedToActor: this.state.isLinkedToToken,
     };
   }
 
   override activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
     // register events for all users with permission
-    if (this.state.userListPermissions.includes(String((game as Game).userId))) {
+    if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
+      // html.find('button.actorLink').on('click', DataWrapper2e.createApplications);
+      html.find('button.actorLink').on('click', this._onButtonClickSelectedActors.bind(this));
+      html.find('button.actorUpdate').on('click', this._onButtonClickUpdateActors.bind(this));
     }
   }
 
-  private _onClickSymbolImage(event: Event) {
+  protected _onClickSymbolImage(event: Event) {
     event.preventDefault();
     // switch css classes of the images
     const image = event.currentTarget as HTMLImageElement;
@@ -109,7 +115,7 @@ export class DisplayActions2e extends Application {
    * Helper function to make Payload for Handlebars each loop to pass data
    * @param iterator array size
    */
-  private buildHandlebarPayload(iterator: number, imageObj: any, state: string[]) {
+  protected buildHandlebarPayload(iterator: number, imageObj: any, state: string[]) {
     let payload = [];
     for (let index = 0; index < iterator; index++) {
       payload.push(foundry.utils.mergeObject({number: index, cssClass: state[index]}, imageObj));
@@ -117,7 +123,7 @@ export class DisplayActions2e extends Application {
     return payload;
   }
 
-  private _onChangeCountNumber(event: Event) {
+  protected _onChangeCountNumber(event: Event) {
     event.preventDefault();
     const input = event.currentTarget as HTMLInputElement;
     const value = parseInt(input.value);
@@ -139,10 +145,10 @@ export class DisplayActions2e extends Application {
     }
   }
 
-  protected override _getHeaderButtons(): Application.HeaderButton[] {
+  protected override _getHeaderButtons(): ApplicationHeaderButton[] {
     const buttons = super._getHeaderButtons();
 
-    const headerButton: Application.HeaderButton = {
+    const headerButton: ApplicationHeaderButton = {
       label: 'JOURNAL.ActionShow',
       class: 'share-image',
       icon: 'fas fa-eye',
@@ -156,7 +162,7 @@ export class DisplayActions2e extends Application {
   /**
    * Update internal state based on the size of the arrays
    */
-  private updateState() {
+  protected updateState() {
     // case to few state elements
     if (this.state.classNameListActions.length < this.state.numOfActions) {
       const tmp = Array.from(
@@ -165,7 +171,7 @@ export class DisplayActions2e extends Application {
       );
       this.state.classNameListActions = this.state.classNameListActions.concat(tmp);
     }
-    // too many elements,we remove the last elements
+    // too many elements, we remove the last elements
     else if (this.state.classNameListActions.length > this.state.numOfActions) {
       const cut_value = this.state.classNameListActions.length - this.state.numOfActions;
       this.state.classNameListActions = this.state.classNameListActions.slice(0, cut_value);
@@ -188,15 +194,93 @@ export class DisplayActions2e extends Application {
     }
   }
 
-  private emitUpdate() {
-    (game as Game).socket?.emit(socketEvent, {
+  protected emitUpdate() {
+    game.socket?.emit(socketEvent, {
       operation: 'update',
       state: this.state,
-      user: (game as Game).userId,
+      user: game.userId,
     } as EmitData);
   }
 
   public setState(newState: DisplayActions2eData) {
     this.state = newState;
+  }
+
+  /**
+   * The following functions are only done because transpilation is bullying me and thus i cannot do an child of this class
+   */
+
+  private getTitlePlayer(): string {
+    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+
+    let name = game.users?.find(user => {
+      return user.data._id === this.state.sentFromUserId;
+    })?.data.name;
+
+    return title.concat(' sent from ', String(name));
+  }
+
+  private getTitleToken(): string {
+    let title = game.i18n.localize('DisplayActions2e.WindowTitle');
+
+    let name = (canvas as Canvas).tokens.get(this.state.tokenId as string);
+    title = title.concat(' for ', String(name?.data.name));
+
+    if (this.state.sentFromUserId === game.userId) {
+      return title;
+    }
+
+    name = game.users?.find(user => {
+      return user.data._id === this.state.sentFromUserId;
+    })?.data.name;
+
+    return title.concat(' sent from ', String(name));
+  }
+
+  private _onButtonClickSelectedActors(event: Event) {
+    console.log(event);
+
+    canvas.tokens.controlled.forEach((token: TokenDocumentPF2e) => {
+      // let app = new DisplayTokenActions2e(token.data._id);
+
+      let newState = foundry.utils.deepClone(this.state);
+      newState.isLinkedToToken = true;
+      newState.tokenId = token.data._id;
+      newState = this.generateActionsFromConditions(newState);
+
+      handleToken({
+        operation: 'token',
+        state: newState,
+        user: game.userId,
+      } as EmitData);
+    });
+  }
+
+  private _onButtonClickUpdateActors(event: Event) {
+    console.log(event);
+
+    this.state = this.generateActionsFromConditions(this.state);
+    this.render();
+  }
+
+  private generateActionsFromConditions(oldState: DisplayActions2eData): DisplayActions2eData {
+    let newState = oldState;
+
+    let actor = ((canvas as Canvas).tokens.get(oldState.tokenId!)?.document as TokenDocumentPF2e).actor as ActorPF2e;
+    // let actor = game.actors.tokens[oldState.tokenId!] as ActorPF2e;
+    console.log(actor);
+    console.log(oldState);
+
+    let conditions = actor.conditions as Map<string, ConditionPF2e>;
+
+    let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
+
+    newState.numOfActions = numOfActions;
+    newState.numOfReactions = numOfReactions;
+
+    return newState;
   }
 }
