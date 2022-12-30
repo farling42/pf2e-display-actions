@@ -89,13 +89,13 @@ function checkForApp(data: EmitData): DisplayActions2e {
   return newApp;
 }
 
-export function actionsFromConditions(conditions: ConditionPF2e[]): [number, number] {
+export function actionsFromConditions(conditions: Map<string, ConditionPF2e>): [number, number] {
   let numOfActions = 3;
   let numOfReactions = 1;
 
-  let stun = conditions.filter(val => {
-    return val.system.slug === 'stunned';
-  });
+  console.log(conditions);
+
+  let stun = conditions.get('stunned');
   // stunned overwrites slow thus it must be handled first
   if (stun) {
     numOfActions = stun[0].value! * condtionModifierTable['stunned'];

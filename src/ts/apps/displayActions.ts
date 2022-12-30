@@ -1,7 +1,7 @@
 import {ActorPF2e} from '../../../types/src/module/actor';
 import {ConditionPF2e} from '../../../types/src/module/item';
 import {TokenDocumentPF2e} from '../../../types/src/module/token-document';
-import {condtionModifierTable, moduleId, socketEvent} from '../constants';
+import {moduleId, socketEvent} from '../constants';
 import {actionsFromConditions, handleToken} from '../utils';
 import {DisplayActions2eData, EmitData} from '../types';
 import {SelectiveShowApp} from './selectiveShow';
@@ -274,7 +274,7 @@ export class DisplayActions2e extends Application {
     console.log(actor);
     console.log(oldState);
 
-    let conditions = actor.conditions as ConditionPF2e[];
+    let conditions = actor.conditions as Map<string, ConditionPF2e>;
 
     let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
 

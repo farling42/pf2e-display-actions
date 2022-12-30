@@ -4,7 +4,8 @@ const moduleId = name;
 const socketEvent = `module.${moduleId}`;
 const condtionModifierTable = {
   slowed: -1,
-  quickened: 1
+  quickened: 1,
+  stunned: 1
 };
 class SelectiveShowApp extends FormApplication {
   constructor(users, state) {
@@ -304,17 +305,9 @@ class DisplayActions2e extends Application {
     console.log(actor);
     console.log(oldState);
     let conditions = actor.conditions;
-    let baseActions = 3;
-    let baseReactions = 1;
-    conditions.forEach((condition) => {
-      let slug = condition.system.slug;
-      if (condtionModifierTable[slug]) {
-        let valMod = condition.system.value.isValued ? condition.value : 1;
-        baseActions += condtionModifierTable[slug] * valMod;
-      }
-    });
-    newState.numOfActions = baseActions;
-    newState.numOfReactions = baseReactions;
+    let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
+    newState.numOfActions = numOfActions;
+    newState.numOfReactions = numOfReactions;
     return newState;
   }
 }
@@ -381,6 +374,24 @@ function checkForApp(data) {
     }
   }
   return newApp;
+}
+function actionsFromConditions(conditions) {
+  let numOfActions = 3;
+  let numOfReactions = 1;
+  console.log(conditions);
+  let stun = conditions.get("stunned");
+  if (stun) {
+    numOfActions = stun[0].value * condtionModifierTable["stunned"];
+  } else {
+    conditions.forEach((condition) => {
+      let slug = condition.system.slug;
+      if (condtionModifierTable[slug]) {
+        let valMod = condition.system.value.isValued ? condition.value : 1;
+        numOfActions += condtionModifierTable[slug] * valMod;
+      }
+    });
+  }
+  return [numOfActions, numOfReactions];
 }
 let module;
 let homeDisplayActions;

@@ -3,8 +3,10 @@
     {{#unless isLinkedToActor}}
         <label for="num-action">Actions: </label>
         <input class="input-counter" id="count-action" name="num-action" type="number" value="{{this.numOfActions}}">
+    {{/unless}} 
         <label for="num-reaction">Reactions: </label>
         <input class="input-counter" id="count-reaction" name="num-reaction" type="number" value="{{this.numOfReactions}}">
+    {{#unless isLinkedToActor}}
         <button class="actorLink" id="actorLink">Link to selected Actors</button>
     {{/unless}} 
     {{#if isLinkedToActor}}
