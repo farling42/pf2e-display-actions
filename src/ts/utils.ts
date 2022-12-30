@@ -40,7 +40,6 @@ export function handleUpdate(data: EmitData) {
 }
 
 export function handleToken(data: EmitData) {
-  console.log(data);
   const dialog = checkForApp(data);
   dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
 }
@@ -92,8 +91,6 @@ function checkForApp(data: EmitData): DisplayActions2e {
 export function actionsFromConditions(conditions: Map<string, ConditionPF2e>): [number, number] {
   let numOfActions = 3;
   let numOfReactions = 1;
-
-  console.log(conditions);
 
   let stun = conditions.get('stunned');
   // stunned overwrites slow thus it must be handled first

@@ -341,7 +341,6 @@ function handleUpdate(data) {
   }
 }
 function handleToken(data) {
-  console.log(data);
   const dialog = checkForApp(data);
   dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
@@ -378,7 +377,6 @@ function checkForApp(data) {
 function actionsFromConditions(conditions) {
   let numOfActions = 3;
   let numOfReactions = 1;
-  console.log(conditions);
   let stun = conditions.get("stunned");
   if (stun) {
     numOfActions = stun[0].value * condtionModifierTable["stunned"];

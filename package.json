@@ -4,6 +4,7 @@
   "description": "A small module to display the pathfinder action economy for convinience.",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "tsc && vite build",
     "watch": "tsc && vite build --watch"

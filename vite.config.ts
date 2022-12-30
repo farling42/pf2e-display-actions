@@ -34,6 +34,14 @@ const config = defineConfig({
       },
     },
   },
+  resolve: {
+    alias: [
+      {
+        find: './runtimeConfig',
+        replacement: './runtimeConfig.browser',
+      },
+    ],
+  },
   // optimizeDeps: {
   //   // exclude: ['@sveltejs/vite-plugin-svelte'],
   //   include: ['jszip'],
