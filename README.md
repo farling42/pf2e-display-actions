@@ -18,6 +18,8 @@ This should get you your action display ![action display dialog](dialog.png)
 #### v 1.6.0
 - added ability to connect a app window with a token
 - added basic handling of conditions related to actions
+##### v 1.6.1
+- some small improvements to title logic
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
