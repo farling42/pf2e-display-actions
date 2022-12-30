@@ -5,6 +5,7 @@ import {defineConfig, Plugin} from 'vite';
 import {resolve as pathResolve} from 'path';
 import checker from 'vite-plugin-checker';
 import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 
 import './src/styles/module.css';
 import './src/styles/styles.css';
@@ -78,7 +79,7 @@ const config = defineConfig({
         // preserveModules: true,
         // dynamicImportInCjs: true,
         // externalImportAssertions: true,
-        // esModule: true,
+        esModule: true,
         // file: path.resolve(__dirname, 'dist/scripts/module.js'),
         // file: resolve(__dirname, 'dist/scripts/module.js'),
         dir: 'dist',
@@ -86,12 +87,13 @@ const config = defineConfig({
     },
   },
   plugins: [
+    resolve(),
+    commonjs({
+      transformMixedEsModules: true,
+    }),
     updateModuleManifestPlugin(),
     checker({
       typescript: true,
-    }),
-    commonjs({
-      transformMixedEsModules: true,
     }),
     scss({
       fileName: 'style.css',
