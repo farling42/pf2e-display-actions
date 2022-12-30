@@ -16,8 +16,11 @@ This should get you your action display ![action display dialog](dialog.png)
 - added basic handling of conditions related to actions
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
+    - include better handling
 - beautify the Dialog
 - find a icon for the sidebar
+- make user able to duplicate a window
+- better titles
 
 ## Credits
 - I used BringingFire's [Blog](https://bringingfire.com/blog/intro-to-foundry-module-development) and respective [template](https://github.com/BringingFire/foundry-module-ts-template)
