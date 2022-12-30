@@ -256,28 +256,48 @@ class DisplayActions2e extends Application {
     this.state = newState;
   }
   getTitlePlayer() {
-    var _a, _b;
     let title = game.i18n.localize("DisplayActions2e.WindowTitle");
     if (this.state.sentFromUserId === game.userId) {
       return title;
     }
-    let name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
-      return user.data._id === this.state.sentFromUserId;
-    })) == null ? void 0 : _b.data.name;
-    return title.concat(" sent from ", String(name2));
+    title = title.concat(this.getTitleSentFrom());
+    title = title.concat(this.getTitleEditoredBy());
+    return title;
   }
   getTitleToken() {
-    var _a, _b;
     let title = game.i18n.localize("DisplayActions2e.WindowTitle");
     let name2 = canvas.tokens.get(this.state.tokenId);
     title = title.concat(" for ", String(name2 == null ? void 0 : name2.data.name));
     if (this.state.sentFromUserId === game.userId) {
       return title;
     }
-    name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
+    title = title.concat(this.getTitleSentFrom());
+    title = title.concat(this.getTitleEditoredBy());
+    return title;
+  }
+  getTitleSentFrom() {
+    var _a, _b;
+    let title = " sent from ";
+    let name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
       return user.data._id === this.state.sentFromUserId;
     })) == null ? void 0 : _b.data.name;
-    return title.concat(" sent from ", String(name2));
+    return title.concat(name2);
+  }
+  getTitleEditoredBy() {
+    var _a;
+    console.log("Jens");
+    console.log(this.state.userListPermissions);
+    if (!(this.state.sentFromUserId === game.userId))
+      return "";
+    if (this.state.userListPermissions.length === 1)
+      return "";
+    let title = " editable by ";
+    (_a = game.users) == null ? void 0 : _a.forEach((user) => {
+      if (this.state.userListPermissions.includes(user.data._id) && !(user.data._id === this.state.sentFromUserId)) {
+        title = title.concat(user.data.name, " ");
+      }
+    });
+    return title;
   }
   _onButtonClickSelectedActors() {
     canvas.tokens.controlled.forEach((token) => {

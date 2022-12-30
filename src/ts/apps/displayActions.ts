@@ -216,11 +216,8 @@ export class DisplayActions2e extends Application {
       return title;
     }
 
-    let name = game.users?.find(user => {
-      return user.data._id === this.state.sentFromUserId;
-    })?.data.name;
-
-    return title.concat(' sent from ', String(name));
+    title = title.concat(this.getTitleSentFrom());
+    return title;
   }
 
   private getTitleToken(): string {
@@ -233,11 +230,16 @@ export class DisplayActions2e extends Application {
       return title;
     }
 
-    name = game.users?.find(user => {
+    title = title.concat(this.getTitleSentFrom());
+    return title;
+  }
+
+  private getTitleSentFrom(): string {
+    let title = ' sent from ';
+    let name = game.users?.find(user => {
       return user.data._id === this.state.sentFromUserId;
     })?.data.name;
-
-    return title.concat(' sent from ', String(name));
+    return title.concat(name);
   }
 
   private _onButtonClickSelectedActors() {
