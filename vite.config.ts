@@ -3,7 +3,6 @@ import copy from 'rollup-plugin-copy';
 import scss from 'rollup-plugin-scss';
 import {defineConfig, Plugin} from 'vite';
 import {resolve as pathResolve} from 'path';
-import {svelte} from '@sveltejs/vite-plugin-svelte';
 import checker from 'vite-plugin-checker';
 import commonjs from '@rollup/plugin-commonjs';
 
@@ -82,9 +81,6 @@ const config = defineConfig({
   },
   plugins: [
     updateModuleManifestPlugin(),
-    svelte({
-      configFile: '../svelte.config.cjs', // relative to src/
-    }),
     checker({
       typescript: true,
     }),
