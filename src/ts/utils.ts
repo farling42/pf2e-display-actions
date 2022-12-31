@@ -1,18 +1,16 @@
-import {ActorPF2e} from '../../types/src/module/actor';
 import {ConditionPF2e} from '../../types/src/module/item';
-import {TokenDocumentPF2e} from '../../types/src/module/token-document';
 import {DisplayActions2e} from './apps/displayActions';
 import {condtionModifierTable, moduleId} from './constants';
 import {EmitData, MyModule} from './types';
 
 export function handleShowToAll(data: EmitData) {
-  const dialog = checkForApp(data);
+  const dialog = checkAndBuildApp(data);
   dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
 }
 
 export function handleShowToSelection(data: EmitData) {
   if (data.userList?.includes(String(game.userId))) {
-    const dialog = checkForApp(data);
+    const dialog = checkAndBuildApp(data);
     dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
   }
 }
@@ -40,8 +38,50 @@ export function handleUpdate(data: EmitData) {
 }
 
 export function handleToken(data: EmitData) {
-  const dialog = checkForApp(data);
+  const dialog = checkAndBuildApp(data);
   dialog.render(true, {id: `DisplayActions2e${data.user}`} as RenderOptions);
+}
+
+export function handleDuplication(data: EmitData) {
+  let newState = foundry.utils.deepClone(data.state);
+
+  do {
+    newState.duplicationNr += 1;
+  } while (
+    checkForApp({
+      operation: data.operation,
+      user: data.user,
+      state: newState,
+      userList: data.userList,
+    })
+  );
+
+  const dialog = new DisplayActions2e(newState);
+  const module = game.modules.get(moduleId) as unknown as MyModule;
+  dialog.render(true, {id: `DisplayActions2e${data.user}${newState.duplicationNr}`} as RenderOptions);
+  // push into list to wait for updates
+  module.displayActions2e.push(dialog);
+}
+
+/**
+ * helper function to check if the wanted app already exists in the module
+ * @param data data from emit
+ * @returns either found DisplayActions2e or undefined
+ */
+function checkForApp(data: EmitData): DisplayActions2e | undefined {
+  let module = game.modules.get(moduleId) as unknown as MyModule;
+
+  let app = module.displayActions2e.find(app => {
+    let appState = app.getState();
+    let control: boolean = appState.sentFromUserId === data.state.sentFromUserId;
+    control = control && appState.duplicationNr.almostEqual(data.state.duplicationNr);
+    control = control && appState.tokenId === data.state.tokenId;
+    control = control && appState.isLinkedToToken === data.state.isLinkedToToken;
+
+    return control;
+  });
+
+  return app;
 }
 
 /**
@@ -50,41 +90,15 @@ export function handleToken(data: EmitData) {
  * @param data data from emit
  * @returns either found DisplayActions2e or new DisplayActions2e with state
  */
-function checkForApp(data: EmitData): DisplayActions2e {
+function checkAndBuildApp(data: EmitData): DisplayActions2e {
   let module = game.modules.get(moduleId) as unknown as MyModule;
-  let nameInTitle = game.users?.find(user => {
-    return user.data._id === data.state.sentFromUserId;
-  })?.data.name;
   let newApp: DisplayActions2e = new DisplayActions2e(data.state);
-
-  if (nameInTitle) {
-    let app = module.displayActions2e.find(app => {
-      return app.title.includes(nameInTitle!);
-    });
-
-    if (app) {
-      newApp = app;
-    } else {
-      // push into list to wait for updates
-      module.displayActions2e.push(newApp);
-    }
+  let app = checkForApp(data);
+  if (app) {
+    return app;
   }
-
-  if (data.state.isLinkedToToken && data.state.tokenId) {
-    let tokenInTitle = (
-      ((canvas as Canvas).tokens.get(data.state.tokenId)?.document as TokenDocumentPF2e).actor as ActorPF2e
-    ).name;
-    let app = module.displayActions2e.find(app => {
-      return app.title.includes(tokenInTitle);
-    });
-    if (app) {
-      newApp = app;
-    } else {
-      // push into list to wait for updates
-      module.displayActions2e.push(newApp);
-    }
-  }
-
+  // push into list to wait for updates
+  module.displayActions2e.push(newApp);
   return newApp;
 }
 

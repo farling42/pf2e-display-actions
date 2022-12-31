@@ -112,7 +112,8 @@ class DisplayActions2e extends Application {
       sentFromUserId: String(game.userId),
       userListPermissions: [String(game.userId)],
       tokenId: void 0,
-      isLinkedToToken: this.isLinkedToActor
+      isLinkedToToken: this.isLinkedToActor,
+      duplicationNr: 0
     };
     this.showPlayerHandler = new SelectiveShowApp([String((_a = game.user) == null ? void 0 : _a.data.name)], this.state);
     if (newState) {
@@ -120,11 +121,13 @@ class DisplayActions2e extends Application {
     }
   }
   get title() {
+    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
     if (this.state.isLinkedToToken) {
-      return this.getTitleToken();
-    } else {
-      return this.getTitlePlayer();
+      title = title.concat(this.getTitleToken());
     }
+    title = title.concat(this.getTitleSentFrom());
+    title = title.concat(this.getTitleDuplication());
+    return title;
   }
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -219,7 +222,14 @@ class DisplayActions2e extends Application {
       icon: "fas fa-eye",
       onclick: () => this.showPlayerHandler._handleShowPlayers(this.state)
     };
+    const headerButtonDuplication = {
+      label: "DisplayActions2e.Duplication",
+      class: "duplicate-app",
+      icon: "fa fa-clone",
+      onclick: () => this._onHeaderDuplication()
+    };
     buttons.unshift(headerButton);
+    buttons.unshift(headerButtonDuplication);
     return buttons;
   }
   updateState() {
@@ -253,50 +263,33 @@ class DisplayActions2e extends Application {
     });
   }
   setState(newState) {
-    this.state = newState;
+    this.state = foundry.utils.deepClone(newState);
   }
-  getTitlePlayer() {
-    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
-    }
-    title = title.concat(this.getTitleSentFrom());
-    title = title.concat(this.getTitleEditoredBy());
-    return title;
+  getState() {
+    return foundry.utils.deepClone(this.state);
   }
   getTitleToken() {
-    let title = game.i18n.localize("DisplayActions2e.WindowTitle");
+    let title = "";
     let name2 = canvas.tokens.get(this.state.tokenId);
     title = title.concat(" for ", String(name2 == null ? void 0 : name2.data.name));
-    if (this.state.sentFromUserId === game.userId) {
-      return title;
-    }
-    title = title.concat(this.getTitleSentFrom());
-    title = title.concat(this.getTitleEditoredBy());
     return title;
   }
   getTitleSentFrom() {
     var _a, _b;
+    if (this.state.sentFromUserId === game.userId) {
+      return "";
+    }
     let title = " sent from ";
     let name2 = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
       return user.data._id === this.state.sentFromUserId;
     })) == null ? void 0 : _b.data.name;
     return title.concat(name2);
   }
-  getTitleEditoredBy() {
-    var _a;
-    console.log("Jens");
-    console.log(this.state.userListPermissions);
-    if (!(this.state.sentFromUserId === game.userId))
-      return "";
-    if (this.state.userListPermissions.length === 1)
-      return "";
-    let title = " editable by ";
-    (_a = game.users) == null ? void 0 : _a.forEach((user) => {
-      if (this.state.userListPermissions.includes(user.data._id) && !(user.data._id === this.state.sentFromUserId)) {
-        title = title.concat(user.data.name, " ");
-      }
-    });
+  getTitleDuplication() {
+    let title = "";
+    if (this.state.duplicationNr > 0) {
+      title = title.concat(" (", String(this.state.duplicationNr), ")");
+    }
     return title;
   }
   _onButtonClickSelectedActors() {
@@ -316,9 +309,17 @@ class DisplayActions2e extends Application {
     this.state = this.generateActionsFromConditions(this.state);
     this.render();
   }
+  _onHeaderDuplication() {
+    let newState = foundry.utils.deepClone(this.state);
+    handleDuplication({
+      operation: "duplication",
+      state: newState,
+      user: game.userId
+    });
+  }
   generateActionsFromConditions(oldState) {
     var _a;
-    let newState = oldState;
+    let newState = foundry.utils.deepClone(oldState);
     let actor = ((_a = canvas.tokens.get(oldState.tokenId)) == null ? void 0 : _a.document).actor;
     let conditions = actor.conditions;
     let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
@@ -328,13 +329,13 @@ class DisplayActions2e extends Application {
   }
 }
 function handleShowToAll(data) {
-  const dialog = checkForApp(data);
+  const dialog = checkAndBuildApp(data);
   dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
 function handleShowToSelection(data) {
   var _a;
   if ((_a = data.userList) == null ? void 0 : _a.includes(String(game.userId))) {
-    const dialog = checkForApp(data);
+    const dialog = checkAndBuildApp(data);
     dialog.render(true, { id: `DisplayActions2e${data.user}` });
   }
 }
@@ -357,37 +358,44 @@ function handleUpdate(data) {
   }
 }
 function handleToken(data) {
-  const dialog = checkForApp(data);
+  const dialog = checkAndBuildApp(data);
   dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
+function handleDuplication(data) {
+  let newState = foundry.utils.deepClone(data.state);
+  do {
+    newState.duplicationNr += 1;
+  } while (checkForApp({
+    operation: data.operation,
+    user: data.user,
+    state: newState,
+    userList: data.userList
+  }));
+  const dialog = new DisplayActions2e(newState);
+  const module2 = game.modules.get(moduleId);
+  dialog.render(true, { id: `DisplayActions2e${data.user}${newState.duplicationNr}` });
+  module2.displayActions2e.push(dialog);
+}
 function checkForApp(data) {
-  var _a, _b, _c;
   let module2 = game.modules.get(moduleId);
-  let nameInTitle = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
-    return user.data._id === data.state.sentFromUserId;
-  })) == null ? void 0 : _b.data.name;
+  let app = module2.displayActions2e.find((app2) => {
+    let appState = app2.getState();
+    let control = appState.sentFromUserId === data.state.sentFromUserId;
+    control = control && appState.duplicationNr.almostEqual(data.state.duplicationNr);
+    control = control && appState.tokenId === data.state.tokenId;
+    control = control && appState.isLinkedToToken === data.state.isLinkedToToken;
+    return control;
+  });
+  return app;
+}
+function checkAndBuildApp(data) {
+  let module2 = game.modules.get(moduleId);
   let newApp = new DisplayActions2e(data.state);
-  if (nameInTitle) {
-    let app = module2.displayActions2e.find((app2) => {
-      return app2.title.includes(nameInTitle);
-    });
-    if (app) {
-      newApp = app;
-    } else {
-      module2.displayActions2e.push(newApp);
-    }
+  let app = checkForApp(data);
+  if (app) {
+    return app;
   }
-  if (data.state.isLinkedToToken && data.state.tokenId) {
-    let tokenInTitle = ((_c = canvas.tokens.get(data.state.tokenId)) == null ? void 0 : _c.document).actor.name;
-    let app = module2.displayActions2e.find((app2) => {
-      return app2.title.includes(tokenInTitle);
-    });
-    if (app) {
-      newApp = app;
-    } else {
-      module2.displayActions2e.push(newApp);
-    }
-  }
+  module2.displayActions2e.push(newApp);
   return newApp;
 }
 function actionsFromConditions(conditions) {
