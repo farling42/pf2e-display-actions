@@ -117,8 +117,6 @@ class DisplayActions2e extends Application {
     };
     this.showPlayerHandler = new SelectiveShowApp([String((_a = game.user) == null ? void 0 : _a.data.name)], this.state);
     if (newState) {
-      console.log(newState);
-      console.log("Jens2");
       this.state = newState;
     }
   }
@@ -367,8 +365,6 @@ function handleDuplication(data) {
   let newState = foundry.utils.deepClone(data.state);
   do {
     newState.duplicationNr += 1;
-    console.log(data);
-    console.log("Jens");
   } while (checkForApp({
     operation: data.operation,
     user: data.user,

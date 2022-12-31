@@ -5,6 +5,8 @@
 
 Displays Pathfinder2e action and reaction buttons.
 
+This module supports [Bug Reporter](https://github.com/League-of-Foundry-Developers/bug-reporter).
+
 ## Usage
 
 Click on this Button in the actors tab. ![Button in the actors tab](usage.png)
@@ -20,12 +22,13 @@ This should get you your action display ![action display dialog](dialog.png)
 - added basic handling of conditions related to actions
 ##### v 1.6.1
 - some small improvements to title logic
+#### v 1.7.0
+- added Duplication button in the header
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
 - beautify the Dialog
 - find a icon for the sidebar
-- make user able to duplicate a window
 - better titles
 
 ## Credits
