@@ -117,6 +117,8 @@ class DisplayActions2e extends Application {
     };
     this.showPlayerHandler = new SelectiveShowApp([String((_a = game.user) == null ? void 0 : _a.data.name)], this.state);
     if (newState) {
+      console.log(newState);
+      console.log("Jens2");
       this.state = newState;
     }
   }
@@ -263,7 +265,10 @@ class DisplayActions2e extends Application {
     });
   }
   setState(newState) {
-    this.state = newState;
+    this.state = foundry.utils.deepClone(newState);
+  }
+  getState() {
+    return foundry.utils.deepClone(this.state);
   }
   getTitleToken() {
     let title = "";
@@ -308,7 +313,6 @@ class DisplayActions2e extends Application {
   }
   _onHeaderDuplication() {
     let newState = foundry.utils.deepClone(this.state);
-    newState.duplicationNr += 1;
     handleDuplication({
       operation: "duplication",
       state: newState,
@@ -317,7 +321,7 @@ class DisplayActions2e extends Application {
   }
   generateActionsFromConditions(oldState) {
     var _a;
-    let newState = oldState;
+    let newState = foundry.utils.deepClone(oldState);
     let actor = ((_a = canvas.tokens.get(oldState.tokenId)) == null ? void 0 : _a.document).actor;
     let conditions = actor.conditions;
     let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
@@ -327,13 +331,13 @@ class DisplayActions2e extends Application {
   }
 }
 function handleShowToAll(data) {
-  const dialog = checkForApp(data);
+  const dialog = checkAndBuildApp(data);
   dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
 function handleShowToSelection(data) {
   var _a;
   if ((_a = data.userList) == null ? void 0 : _a.includes(String(game.userId))) {
-    const dialog = checkForApp(data);
+    const dialog = checkAndBuildApp(data);
     dialog.render(true, { id: `DisplayActions2e${data.user}` });
   }
 }
@@ -356,46 +360,46 @@ function handleUpdate(data) {
   }
 }
 function handleToken(data) {
-  const dialog = checkForApp(data);
+  const dialog = checkAndBuildApp(data);
   dialog.render(true, { id: `DisplayActions2e${data.user}` });
 }
 function handleDuplication(data) {
-  console.log(data);
-  const dialog = new DisplayActions2e(data.state);
-  dialog.render(true, { id: `DisplayActions2e${data.user}` });
+  let newState = foundry.utils.deepClone(data.state);
+  do {
+    newState.duplicationNr += 1;
+    console.log(data);
+    console.log("Jens");
+  } while (checkForApp({
+    operation: data.operation,
+    user: data.user,
+    state: newState,
+    userList: data.userList
+  }));
+  const dialog = new DisplayActions2e(newState);
+  const module2 = game.modules.get(moduleId);
+  dialog.render(true, { id: `DisplayActions2e${data.user}${newState.duplicationNr}` });
+  module2.displayActions2e.push(dialog);
 }
 function checkForApp(data) {
-  var _a, _b, _c;
   let module2 = game.modules.get(moduleId);
-  let nameInTitle = (_b = (_a = game.users) == null ? void 0 : _a.find((user) => {
-    return user.data._id === data.state.sentFromUserId;
-  })) == null ? void 0 : _b.data.name;
+  let app = module2.displayActions2e.find((app2) => {
+    let appState = app2.getState();
+    let control = appState.sentFromUserId === data.state.sentFromUserId;
+    control = control && appState.duplicationNr.almostEqual(data.state.duplicationNr);
+    control = control && appState.tokenId === data.state.tokenId;
+    control = control && appState.isLinkedToToken === data.state.isLinkedToToken;
+    return control;
+  });
+  return app;
+}
+function checkAndBuildApp(data) {
+  let module2 = game.modules.get(moduleId);
   let newApp = new DisplayActions2e(data.state);
-  if (nameInTitle) {
-    let dup = "";
-    if (data.state.duplicationNr > 0) {
-      dup = "(" + String(data.state.duplicationNr) + ")";
-    }
-    let app = module2.displayActions2e.find((app2) => {
-      return app2.title.includes(nameInTitle) && app2.title.includes(dup);
-    });
-    if (app) {
-      newApp = app;
-    } else {
-      module2.displayActions2e.push(newApp);
-    }
+  let app = checkForApp(data);
+  if (app) {
+    return app;
   }
-  if (data.state.isLinkedToToken && data.state.tokenId) {
-    let tokenInTitle = ((_c = canvas.tokens.get(data.state.tokenId)) == null ? void 0 : _c.document).actor.name;
-    let app = module2.displayActions2e.find((app2) => {
-      return app2.title.includes(tokenInTitle);
-    });
-    if (app) {
-      newApp = app;
-    } else {
-      module2.displayActions2e.push(newApp);
-    }
-  }
+  module2.displayActions2e.push(newApp);
   return newApp;
 }
 function actionsFromConditions(conditions) {

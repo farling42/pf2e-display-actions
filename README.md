@@ -1,6 +1,6 @@
 # Pf2e Display Actions
 
-![GitHub Releases](https://img.shields.io/github/downloads/MoonIsFalling/pf2e-display-actions/latest/module.zip)
+![GitHub Releases](https://img.shields.io/badge/dynamic/json?label=Downloads@latest&query=assets%5B1%5D.download_count&url=https%3A%2F%2Fapi.github.com%2Frepos%2FMoonIsFalling%2Fpf2e-display-actions%2Freleases%2Flatest)
 ![GitHub All Releases](https://img.shields.io/github/downloads/MoonIsFalling/pf2e-display-actions/total?label=Downloads+total)
 
 Displays Pathfinder2e action and reaction buttons.

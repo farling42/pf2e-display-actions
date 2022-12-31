@@ -217,7 +217,14 @@ export class DisplayActions2e extends Application {
   }
 
   public setState(newState: DisplayActions2eData) {
-    this.state = newState;
+    this.state = foundry.utils.deepClone(newState);
+  }
+
+  /**
+   * returns a clone of the state not a reference
+   */
+  public getState() {
+    return foundry.utils.deepClone(this.state);
   }
 
   /**
@@ -274,7 +281,6 @@ export class DisplayActions2e extends Application {
 
   private _onHeaderDuplication() {
     let newState = foundry.utils.deepClone(this.state);
-    newState.duplicationNr += 1;
 
     handleDuplication({
       operation: 'duplication',
@@ -284,7 +290,7 @@ export class DisplayActions2e extends Application {
   }
 
   private generateActionsFromConditions(oldState: DisplayActions2eData): DisplayActions2eData {
-    let newState = oldState;
+    let newState = foundry.utils.deepClone(oldState);
 
     let actor = ((canvas as Canvas).tokens.get(oldState.tokenId!)?.document as TokenDocumentPF2e).actor as ActorPF2e;
     // let actor = game.actors.tokens[oldState.tokenId!] as ActorPF2e;
