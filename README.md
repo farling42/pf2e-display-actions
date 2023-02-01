@@ -24,6 +24,9 @@ This should get you your action display ![action display dialog](dialog.png)
 - some small improvements to title logic
 #### v 1.7.0
 - added Duplication button in the header
+#### v1.7.1
+- more responsive application
+  - fixed [#8](https://github.com/MoonIsFalling/pf2e-display-actions/issues/8)
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
@@ -35,3 +38,5 @@ This should get you your action display ![action display dialog](dialog.png)
 - I used BringingFire's [Blog](https://bringingfire.com/blog/intro-to-foundry-module-development) and respective [template](https://github.com/BringingFire/foundry-module-ts-template)
 
 - Module [FVTT-SelectiveShow](https://github.com/moo-man/FVTT-SelectiveShow) under is of the MIT License
+
+- thanks for [tehguitarist](https://github.com/tehguitarist) for contributing CSS
