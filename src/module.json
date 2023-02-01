@@ -1,19 +1,22 @@
 {
   "$schema": "https://json.schemastore.org/foundryvtt-manifest.json",
   "name": "pf2e-display-actions",
-  "author": {
-    "name": "MoonIsFalling",
-    "Discord": "Thieftain#0744"
-  },
+  "id": "pf2e-display-actions",
+  "authors": [
+    {
+      "name": "Thieftain",
+      "GitHub": "MoonIsFalling",
+      "Discord": "Thieftain#0744"
+    }
+  ],
   "title": "Pf2e Display Actions",
   "description": "A small module to display the pathfinder action economy for convinience.",
   "version": "1.5.0",
   "packs": [],
   "system": ["pf2e"],
-  "dependencies": [],
   "scripts": [],
   "compatibility": {
-    "minimum": "9",
+    "minimum": "10",
     "verified": "10",
     "maximum": "10"
   },
@@ -43,5 +46,8 @@
   "bugs": "https://github.com/MoonIsFalling/pf2e-display-actions/issues",
   "flags": {
     "allowBugReporter": true
+  },
+  "relationships": {
+    "system": ["pf2e"]
   }
 }
