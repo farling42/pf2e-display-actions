@@ -1,15 +1,23 @@
 .symbol {
     min-width: 10px;
-    max-width: 30px;
     min-height: 10px;
-    max-height: 30px;
     border: none;
+    object-fit: contain;
 }
 
 .symbolClick {
     opacity: 0.5;
 }
 
+.actorLink {
+    line-height: 1.1;
+    width: auto
+}
+
+.input-counter {
+    column-gap: 5px;
+    max-width: 20px;
+}
 
 .counter {
     grid-area: "counter";
@@ -19,27 +27,29 @@
     min-width: 25px;
 }
 
-.input-counter {
-    column-gap: 5px;
-    max-width: 20px;
-}
-
-.actorLink {
-    line-height: 1.1;
-    width: auto
-}
-
 .actions {
     grid-area: "actions";
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    flex: 2.5 2.5 min-content;
 }
 
 .reactions {
     grid-area: "reactions";
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    flex: 1 1 min-content;
 }
 
 .flexbox-actions {
     display: flex;
     grid-area: "flex-actions";
+    justify-content: flex-start;
+    align-content: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: row;
 }
 
 .wrapper {
