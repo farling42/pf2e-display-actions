@@ -24,9 +24,12 @@ This should get you your action display ![action display dialog](dialog.png)
 - some small improvements to title logic
 #### v 1.7.0
 - added Duplication button in the header
-#### v1.7.1
+##### v1.7.1
 - more responsive application
   - fixed [#8](https://github.com/MoonIsFalling/pf2e-display-actions/issues/8)
+#### v1.8.0
+- discontinued support for v9 of Foundry
+  - fixed V10 manifest warnings [#10](https://github.com/MoonIsFalling/pf2e-display-actions/issues/10)
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
