@@ -52,8 +52,8 @@ export class DisplayActions2e extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'DisplayActions2e',
       template: `modules/${moduleId}/templates/result.hbs`,
-      width: 600,
-      height: 200,
+      width: 260,
+      height: 110,
       resizable: true,
       title: 'DisplayActions2e.WindowTitle',
     }) as ApplicationOptions;

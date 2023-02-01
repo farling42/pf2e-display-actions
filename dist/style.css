@@ -1,54 +1,62 @@
 .symbol {
-  min-width: 10px;
-  max-width: 100px;
-  min-height: 10px;
-  max-height: 100px;
-  border: none;
+    min-width: 10px;
+    max-width: 30px;
+    min-height: 10px;
+    max-height: 30px;
+    border: none;
 }
 
 .symbolClick {
-  opacity: 0.5;
+    opacity: 0.5;
+}
+
+
+.counter {
+    grid-area: "counter";
+    display: flex;
+    height: fit-content;
+    width: fit-content;
+    min-width: 25px;
 }
 
 .input-counter {
-  width: 25px;
-  column-gap: 5px;
+    column-gap: 5px;
+    max-width: 20px;
 }
 
-.counter {
-  grid-area: "counter";
-  display: flex;
-  height: fit-content;
+.actorLink {
+    line-height: 1.1;
+    width: auto
 }
 
 .actions {
-  grid-area: "actions";
+    grid-area: "actions";
 }
 
 .reactions {
-  grid-area: "reactions";
+    grid-area: "reactions";
 }
 
 .flexbox-actions {
-  display: flex;
-  grid-area: "flex-actions";
+    display: flex;
+    grid-area: "flex-actions";
 }
 
 .wrapper {
-  display: grid;
-  grid-gap: 5px;
-  grid-template-areas: "counter" "flexbox-actions";
-  height: fit-content;
+    display: grid;
+    grid-gap: 5px;
+    grid-template-areas: 
+    "counter"
+    "flexbox-actions";
+    height: fit-content;
 }
 
 .main {
-  width: auto;
-  height: auto;
+    width: auto;
+    height: auto;
 }
 
 /*@font-face {
     font-family: 'pf2-actions';
     src: url("/Data/systems/pf2e/fonts/Pathfinder2eActions.ttf");
 }*/
-
-/*# sourceMappingURL=style.css.map */

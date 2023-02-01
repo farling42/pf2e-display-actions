@@ -1,8 +1,8 @@
 .symbol {
     min-width: 10px;
-    max-width: 100px;
+    max-width: 30px;
     min-height: 10px;
-    max-height: 100px;
+    max-height: 30px;
     border: none;
 }
 
@@ -10,15 +10,23 @@
     opacity: 0.5;
 }
 
-.input-counter {
-    width: 25px;
-    column-gap: 5px;
-}
 
 .counter {
     grid-area: "counter";
     display: flex;
     height: fit-content;
+    width: fit-content;
+    min-width: 25px;
+}
+
+.input-counter {
+    column-gap: 5px;
+    max-width: 20px;
+}
+
+.actorLink {
+    line-height: 1.1;
+    width: auto
 }
 
 .actions {
