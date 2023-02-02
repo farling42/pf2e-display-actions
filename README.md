@@ -30,6 +30,9 @@ This should get you your action display ![action display dialog](dialog.png)
 #### v1.8.0
 - discontinued support for v9 of Foundry
   - fixed V10 manifest warnings [#10](https://github.com/MoonIsFalling/pf2e-display-actions/issues/10)
+#### v1.9.0
+- added a Send To Chat Button to the Show Players Dialog
+  
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
