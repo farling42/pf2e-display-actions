@@ -72,12 +72,6 @@ class SelectiveShowApp extends FormApplication {
     html.find(".send-to-chat").click((ev) => {
       ev.preventDefault();
       this._updateObject();
-      console.log(html);
-      let msg = document.getElementById("DisplayActions2e").getElementsByClassName("window-content")[0].getElementsByClassName("flexbox-actions")[0];
-      console.log(this.displayActionState.appId);
-      ChatMessage.create({
-        content: msg.outerHTML
-      });
       handleSendToChat({
         operation: "sendToChat",
         state: this.displayActionState,
@@ -129,15 +123,12 @@ class DisplayActions2e extends Application {
       userListPermissions: [String(game.userId)],
       tokenId: void 0,
       isLinkedToToken: this.isLinkedToActor,
-      duplicationNr: 0,
-      appId: this.appId
+      duplicationNr: 0
     };
     this.showPlayerHandler = new SelectiveShowApp([String((_a = game.user) == null ? void 0 : _a.data.name)], this.state);
     if (newState) {
       this.state = newState;
     }
-    console.log("Jens");
-    console.log(this.appId);
   }
   get title() {
     let title = game.i18n.localize("DisplayActions2e.WindowTitle");
