@@ -2,6 +2,7 @@
 
 import {moduleId, socketEvent} from '../constants';
 import {DisplayActions2eData, EmitData} from '../types';
+import {handleSendToChat} from '../utils';
 
 export class SelectiveShowApp extends FormApplication {
   private userNameList: string[];
@@ -75,6 +76,19 @@ export class SelectiveShowApp extends FormApplication {
         user: game.userId,
         userList: this.userNameList,
       } as EmitData);
+
+      this.close();
+    });
+
+    html.find('.send-to-chat').click(ev => {
+      ev.preventDefault();
+      this._updateObject();
+
+      handleSendToChat({
+        operation: 'sendToChat',
+        state: this.displayActionState,
+        user: game.userId,
+      });
 
       this.close();
     });
