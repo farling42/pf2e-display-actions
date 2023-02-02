@@ -63,6 +63,19 @@ export function handleDuplication(data: EmitData) {
   module.displayActions2e.push(dialog);
 }
 
+export function handleSendToChat(data: EmitData) {
+  let app = checkForApp(data);
+  if (app) {
+    if (app.rendered) {
+      // find the actions html, then wrap it to create "outerHtml"
+      let msg = app.element.find('.window-content').find('.flexbox-actions').wrapAll('<div>').parent();
+      ChatMessage.create({
+        content: msg.html(),
+      });
+    }
+  }
+}
+
 /**
  * helper function to check if the wanted app already exists in the module
  * @param data data from emit

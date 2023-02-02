@@ -1,6 +1,6 @@
 {
   "name": "pf2e-display-actions",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "A small module to display the pathfinder action economy for convinience.",
   "license": "MIT",
   "private": true,

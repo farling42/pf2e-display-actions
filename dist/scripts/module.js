@@ -69,6 +69,16 @@ class SelectiveShowApp extends FormApplication {
       });
       this.close();
     });
+    html.find(".send-to-chat").click((ev) => {
+      ev.preventDefault();
+      this._updateObject();
+      handleSendToChat({
+        operation: "sendToChat",
+        state: this.displayActionState,
+        user: game.userId
+      });
+      this.close();
+    });
   }
   _updateObject() {
     let selector = Array.from(
@@ -375,6 +385,17 @@ function handleDuplication(data) {
   const module2 = game.modules.get(moduleId);
   dialog.render(true, { id: `DisplayActions2e${data.user}${newState.duplicationNr}` });
   module2.displayActions2e.push(dialog);
+}
+function handleSendToChat(data) {
+  let app = checkForApp(data);
+  if (app) {
+    if (app.rendered) {
+      let msg = app.element.find(".window-content").find(".flexbox-actions").wrapAll("<div>").parent();
+      ChatMessage.create({
+        content: msg.html()
+      });
+    }
+  }
 }
 function checkForApp(data) {
   let module2 = game.modules.get(moduleId);
