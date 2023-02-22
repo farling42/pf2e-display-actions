@@ -66,10 +66,9 @@
     height: auto;
 }
 
-/*@font-face {
-    font-family: 'pf2-actions';
-    src: url("/Data/systems/pf2e/fonts/Pathfinder2eActions.ttf");
-}*/
+.icon-action::before {
+    content: "a";
+}
 
 /* original by FVTT-SelectiveShow */
 /* modified */

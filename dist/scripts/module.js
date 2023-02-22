@@ -449,7 +449,7 @@ Hooks.on("getSceneControlButtons", (hudButtons) => {
   let tool = {
     name: "DisplayActions2e.ButtonName",
     title: "DisplayActions2e.ButtonHint",
-    icon: "fa fa-angle-double-right",
+    icon: "pf2-icon icon-action",
     button: true,
     visible: true,
     onClick: async () => {
