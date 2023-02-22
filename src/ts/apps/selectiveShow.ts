@@ -19,8 +19,8 @@ export class SelectiveShowApp extends FormApplication {
     options.id = 'DisplayActions2e-selective-show';
     options.template = `modules/${moduleId}/templates/selectiveshow.html`;
     options.classes?.push('selective-show');
-    options.height = 300;
-    options.width = 250;
+    options.height = 265;
+    options.width = 200;
     options.minimizable = true;
     options.resizable = true;
     options.title = game.i18n.localize('selectiveshow.SelectiveShow');

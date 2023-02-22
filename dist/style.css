@@ -68,5 +68,22 @@
     font-family: 'pf2-actions';
     src: url("/Data/systems/pf2e/fonts/Pathfinder2eActions.ttf");
 }*/
+/* original by FVTT-SelectiveShow */
+/* modified */
+.selective-show-form .selector,
+.selective-show-form select {
+  width: 100%;
+  height: 100%;
+  margin: 0%;
+}
+
+.selective-show-form .form-group {
+  height: calc(100% - 130px);
+  /*modified based on number of buttons*/
+}
+
+.selective-show-form button {
+  margin-top: 0px;
+}
 
 /*# sourceMappingURL=style.css.map */
