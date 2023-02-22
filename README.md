@@ -11,8 +11,17 @@ This module supports [Bug Reporter](https://github.com/League-of-Foundry-Develop
 
 Click on this Button in the actors tab. ![Button in the actors tab](usage.png)
 
-
 This should get you your action display ![action display dialog](dialog.png)
+
+Simply change the number in the fields to the desired amount.
+
+### Duplicate
+creates a copy of your window, maybe useful for saving configurations.
+### Show Players
+Opens another another dialog inwhich you can send your dialog to another player at the table. Or send it straight into the chat
+### Link to Actor
+Fixes your Actions to that of the actor linked to the window. (Influenced by slowed, quickened, ...)
+Currently WIP I may have missed many interactions.
 
 ## Changelog
 #### v 1.5.0
@@ -24,20 +33,21 @@ This should get you your action display ![action display dialog](dialog.png)
 - some small improvements to title logic
 #### v 1.7.0
 - added Duplication button in the header
-##### v1.7.1
+##### v 1.7.1
 - more responsive application
   - fixed [#8](https://github.com/MoonIsFalling/pf2e-display-actions/issues/8)
-#### v1.8.0
+#### v 1.8.0
 - discontinued support for v9 of Foundry
   - fixed V10 manifest warnings [#10](https://github.com/MoonIsFalling/pf2e-display-actions/issues/10)
-#### v1.9.0
+#### v 1.9.0
 - added a Send To Chat Button to the Show Players Dialog
+##### v 1.9.1
+- updated the sidebar icon to pf2e action symbol
   
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
 - beautify the Dialog
-- find a icon for the sidebar
 - better titles
 
 ## Credits
