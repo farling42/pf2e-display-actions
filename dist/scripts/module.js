@@ -281,7 +281,7 @@ class DisplayActions2e extends Application {
   getTitleToken() {
     let title = "";
     let name2 = canvas.tokens.get(this.state.tokenId);
-    title = title.concat(" for ", String(name2 == null ? void 0 : name2.data.name));
+    title = title.concat(" for ", String(name2 == null ? void 0 : name2.name));
     return title;
   }
   getTitleSentFrom() {

@@ -21,7 +21,7 @@ export function handleShowWithPermission(data: EmitData) {
 
 export function handleUpdate(data: EmitData) {
   let module = game.modules.get(moduleId) as unknown as MyModule;
-  let nameInTitle = game.users?.find(user => {
+  let nameInTitle = game.users?.find((user: User) => {
     return user.data._id === data.state.sentFromUserId;
   })?.data.name;
 
