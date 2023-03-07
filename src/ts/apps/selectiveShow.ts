@@ -119,7 +119,22 @@ export class SelectiveShowApp extends FormApplication {
   }
 
   _handleShowPlayers(state: DisplayActions2eData) {
-    this.render(true);
+    switch (game.settings.get(moduleId, 'DisplayActions2e.Settings.ShowPlayerId')) {
+      case 'Normal':
+        this.render(true);
+        break;
+      case 'Chat':
+        handleSendToChat({
+          operation: 'sendToChat',
+          state: this.displayActionState,
+          user: game.userId,
+        });
+        break;
+      case 'GM':
+      // TODO: Only send to GameMaster
+      default:
+        break;
+    }
     this.displayActionState = state;
   }
 }

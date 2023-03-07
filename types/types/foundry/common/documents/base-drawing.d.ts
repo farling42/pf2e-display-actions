@@ -1,17 +1,13 @@
 declare module foundry {
     module documents {
-        /**The Drawing embedded document model. */
+        /** The Drawing embedded document model. */
         class BaseDrawing extends abstract.Document {
             static override get schema(): typeof data.DrawingData;
 
             static override get metadata(): DrawingMetadata;
 
             /** Is a user able to update or delete an existing Drawing document? */
-            protected static _canModify(
-                user: BaseUser,
-                doc: BaseDrawing,
-                data: data.DrawingData,
-            ): boolean;
+            protected static _canModify(user: BaseUser, doc: BaseDrawing, data: data.DrawingData): boolean;
         }
 
         interface BaseDrawing {
@@ -27,8 +23,8 @@ declare module foundry {
             isEmbedded: true;
             permissions: {
                 create: "TEMPLATE_CREATE";
-                update: typeof BaseDrawing["_canModify"];
-                delete: typeof BaseDrawing["_canModify"];
+                update: (typeof BaseDrawing)["_canModify"];
+                delete: (typeof BaseDrawing)["_canModify"];
             };
         }
     }

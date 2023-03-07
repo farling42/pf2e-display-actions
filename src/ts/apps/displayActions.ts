@@ -76,6 +76,7 @@ export class DisplayActions2e extends Application {
         this.state.classNameListReactions,
       ),
       isLinkedToActor: this.state.isLinkedToToken,
+      isLinkActorButtonHidden: !(game.settings.get(moduleId, 'DisplayActions2e.Settings.LinkActorId') as boolean),
     };
   }
 
@@ -167,8 +168,12 @@ export class DisplayActions2e extends Application {
       onclick: () => this._onHeaderDuplication(),
     };
 
-    buttons.unshift(headerButton);
-    buttons.unshift(headerButtonDuplication);
+    if (game.settings.get(moduleId, 'DisplayActions2e.Settings.ShowPlayerId') !== 'Hide') {
+      buttons.unshift(headerButton);
+    }
+    if (game.settings.get(moduleId, 'DisplayActions2e.Settings.DuplicateId') as boolean) {
+      buttons.unshift(headerButtonDuplication);
+    }
 
     return buttons;
   }
@@ -234,7 +239,7 @@ export class DisplayActions2e extends Application {
     let title = '';
 
     let name = (canvas as Canvas).tokens.get(this.state.tokenId as string);
-    title = title.concat(' for ', String(name?.data.name));
+    title = title.concat(' for ', String(name?.name));
     return title;
   }
 
@@ -243,7 +248,7 @@ export class DisplayActions2e extends Application {
       return '';
     }
     let title = ' sent from ';
-    let name = game.users?.find(user => {
+    let name = game.users?.find((user: User) => {
       return user.data._id === this.state.sentFromUserId;
     })?.data.name;
     return title.concat(name);

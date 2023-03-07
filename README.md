@@ -15,6 +15,8 @@ This should get you your action display ![action display dialog](dialog.png)
 
 Simply change the number in the fields to the desired amount.
 
+### Options
+Everything below can be tweaked in the settings
 ### Duplicate
 creates a copy of your window, maybe useful for saving configurations.
 ### Show Players
@@ -43,6 +45,9 @@ Currently WIP I may have missed many interactions.
 - added a Send To Chat Button to the Show Players Dialog
 ##### v 1.9.1
 - updated the sidebar icon to pf2e action symbol
+#### v 1.10.0
+- settings are here to stay!
+  - all buttons can be turned off and on in the settings now
   
 ## Roadmap
 - make the amount of actions and reactions based on the selected token

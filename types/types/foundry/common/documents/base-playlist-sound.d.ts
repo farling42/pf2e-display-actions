@@ -8,8 +8,8 @@ declare module foundry {
 
             testUserPermission(
                 user: documents.BaseUser,
-                permission: DocumentPermission | UserAction,
-                { exact }?: { exact?: boolean },
+                permission: DocumentOwnershipString | DocumentOwnershipLevel,
+                { exact }?: { exact?: boolean }
             ): boolean;
         }
 

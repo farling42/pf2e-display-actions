@@ -10,10 +10,9 @@ declare global {
      */
     class Item<TParent extends Actor = Actor> extends ItemConstructor {
         /** A convenience alias of Item#parent which is more semantically intuitive */
-        get actor(): TParent;
+        get actor(): this["parent"];
 
-        /** A convenience reference to the image path (data.img) used to represent this Item */
-        get img(): ImagePath;
+        img: ImageFilePath;
 
         /** A convenience alias of Item#isEmbedded which is preserves legacy support */
         get isOwned(): boolean;
@@ -27,9 +26,6 @@ declare global {
         /** A convenience reference to the item type (data.type) of this Item */
         get type(): string;
 
-        /** conversion to v10 data structure until the new typings are in */
-        get system(): this["data"]["data"];
-
         /** Prepare a data object which defines the data schema used by dice roll commands against this Item */
         getRollData(): object;
 
@@ -38,22 +34,29 @@ declare global {
         protected static override _onCreateDocuments<T extends Item>(
             this: ConstructorOf<T>,
             items: T[],
-            context: DocumentModificationContext,
-        ): Promise<void>;
+            context: DocumentModificationContext<T>
+        ): void;
 
         protected static override _onDeleteDocuments<T extends Item>(
             this: ConstructorOf<T>,
             items: T[],
-            context: DocumentModificationContext,
-        ): Promise<void>;
+            context: DocumentModificationContext<T>
+        ): void;
     }
 
     interface Item<TParent extends Actor = Actor> {
-        readonly data: foundry.data.ItemData<Item, ActiveEffect>;
+        readonly data: foundry.data.ItemData<Item>;
         readonly parent: TParent | null;
-        _sheet: ItemSheet<Item>;
 
-        getFlag(scope: string, key: string): any;
-        getFlag(scope: "core", key: "sourceId"): string | undefined;
+        get collection(): Items<this>;
+
+        get uuid(): ItemUUID;
+
+        _sheet: ItemSheet<this> | null;
+
+        get sheet(): ItemSheet<this>;
     }
+
+    type EmbeddedItemUUID = `Actor.${string}.Item.${string}`;
+    type ItemUUID = WorldDocumentUUID<Item> | EmbeddedItemUUID | CompendiumUUID;
 }

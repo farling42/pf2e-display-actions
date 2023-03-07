@@ -20,7 +20,7 @@ declare module foundry {
             x: number;
             y: number;
             radius: number;
-            path: AudioPath;
+            path: AudioFilePath;
             repeat: boolean;
             volume: number;
             easing: boolean;
@@ -30,7 +30,7 @@ declare module foundry {
         }
 
         class AmbientSoundData<
-            TDocument extends documents.BaseAmbientSound = documents.BaseAmbientSound,
+            TDocument extends documents.BaseAmbientSound = documents.BaseAmbientSound
         > extends abstract.DocumentData<TDocument> {
             static override defineSchema(): abstract.DocumentSchema;
 

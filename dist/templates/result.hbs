@@ -7,7 +7,9 @@
         <label for="num-reaction">Reactions: </label>
         <input class="input-counter" id="count-reaction" name="num-reaction" type="number" value="{{this.numOfReactions}}">
     {{#unless isLinkedToActor}}
+    {{#unless isLinkActorButtonHidden}}
         <button class="actorLink" id="actorLink">Link to Actor</button>
+    {{/unless}}
     {{/unless}} 
     {{#if isLinkedToActor}}
         <button class="actorUpdate" id="actorUpdate">Update</button>

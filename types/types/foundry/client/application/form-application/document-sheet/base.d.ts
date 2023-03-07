@@ -18,14 +18,12 @@ declare global {
         title: string;
     }
 
-    /**
-     * A simple implementation of the FormApplication pattern which is specialized in editing Entity instances
-     */
+    /** A simple implementation of the FormApplication pattern which is specialized in editing Entity instances */
     class DocumentSheet<
         TDocument extends foundry.abstract.Document = foundry.abstract.Document,
-        TOptions extends DocumentSheetOptions = DocumentSheetOptions,
+        TOptions extends DocumentSheetOptions = DocumentSheetOptions
     > extends FormApplication<TDocument, TOptions> {
-        constructor(object: TDocument, options: Partial<DocumentSheetOptions>);
+        constructor(object: TDocument, options?: Partial<TOptions>);
 
         static override get defaultOptions(): DocumentSheetOptions;
 
@@ -34,7 +32,9 @@ declare global {
          */
         get document(): TDocument;
 
-        override getData(options?: TOptions): DocumentSheetData<TDocument> | Promise<DocumentSheetData<TDocument>>;
+        override getData(
+            options?: Partial<TOptions>
+        ): DocumentSheetData<TDocument> | Promise<DocumentSheetData<TDocument>>;
 
         protected override _updateObject(event: Event, formData: Record<string, unknown>): Promise<void>;
     }

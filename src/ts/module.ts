@@ -5,6 +5,7 @@ import {moduleId, socketEvent} from './constants';
 import {EmitData, MyModule} from './types';
 import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './utils';
 import {DisplayActions2e} from './apps/displayActions';
+import {settingSetup} from './settings';
 
 let module: MyModule;
 let homeDisplayActions: DisplayActions2e;
@@ -36,6 +37,7 @@ Hooks.on('getSceneControlButtons', (hudButtons: SceneControl[]) => {
 
 Hooks.on('ready', () => {
   module = game.modules.get(moduleId) as unknown as MyModule;
+  settingSetup();
   homeDisplayActions = new DisplayActions2e();
 
   module.displayActions2e = [homeDisplayActions];

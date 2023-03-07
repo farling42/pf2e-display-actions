@@ -100,7 +100,18 @@ class SelectiveShowApp extends FormApplication {
     });
   }
   _handleShowPlayers(state) {
-    this.render(true);
+    switch (game.settings.get(moduleId, "DisplayActions2e.Settings.ShowPlayerId")) {
+      case "Normal":
+        this.render(true);
+        break;
+      case "Chat":
+        handleSendToChat({
+          operation: "sendToChat",
+          state: this.displayActionState,
+          user: game.userId
+        });
+        break;
+    }
     this.displayActionState = state;
   }
 }
@@ -164,7 +175,8 @@ class DisplayActions2e extends Application {
         { reactionImage: this.reactionImage },
         this.state.classNameListReactions
       ),
-      isLinkedToActor: this.state.isLinkedToToken
+      isLinkedToActor: this.state.isLinkedToToken,
+      isLinkActorButtonHidden: !game.settings.get(moduleId, "DisplayActions2e.Settings.LinkActorId")
     };
   }
   activateListeners(html) {
@@ -238,8 +250,12 @@ class DisplayActions2e extends Application {
       icon: "fa fa-clone",
       onclick: () => this._onHeaderDuplication()
     };
-    buttons.unshift(headerButton);
-    buttons.unshift(headerButtonDuplication);
+    if (game.settings.get(moduleId, "DisplayActions2e.Settings.ShowPlayerId") !== "Hide") {
+      buttons.unshift(headerButton);
+    }
+    if (game.settings.get(moduleId, "DisplayActions2e.Settings.DuplicateId")) {
+      buttons.unshift(headerButtonDuplication);
+    }
     return buttons;
   }
   updateState() {
@@ -281,7 +297,7 @@ class DisplayActions2e extends Application {
   getTitleToken() {
     let title = "";
     let name2 = canvas.tokens.get(this.state.tokenId);
-    title = title.concat(" for ", String(name2 == null ? void 0 : name2.data.name));
+    title = title.concat(" for ", String(name2 == null ? void 0 : name2.name));
     return title;
   }
   getTitleSentFrom() {
@@ -436,6 +452,37 @@ function actionsFromConditions(conditions) {
   }
   return [numOfActions, numOfReactions];
 }
+function settingSetup() {
+  game.settings.register(moduleId, "DisplayActions2e.Settings.DuplicateId", {
+    name: "DisplayActions2e.Settings.DuplicateSetting",
+    hint: "DisplayActions2e.Settings.DuplicateHint",
+    config: true,
+    scope: "client",
+    type: Boolean,
+    default: false
+  });
+  game.settings.register(moduleId, "DisplayActions2e.Settings.LinkActorId", {
+    name: "DisplayActions2e.Settings.LinkActorSetting",
+    hint: "DisplayActions2e.Settings.LinkActorHint",
+    config: true,
+    scope: "client",
+    type: Boolean,
+    default: false
+  });
+  game.settings.register(moduleId, "DisplayActions2e.Settings.ShowPlayerId", {
+    name: "DisplayActions2e.Settings.ShowPlayerSetting",
+    hint: "DisplayActions2e.Settings.ShowPlayerHint",
+    config: true,
+    scope: "client",
+    type: String,
+    choices: {
+      Hide: "DisplayActions2e.Settings.ShowPlayerChoices.Hide",
+      Normal: "DisplayActions2e.Settings.ShowPlayerChoices.Normal",
+      Chat: "DisplayActions2e.Settings.ShowPlayerChoices.Chat"
+    },
+    default: "Normal"
+  });
+}
 let module;
 let homeDisplayActions;
 Hooks.once("init", () => {
@@ -463,6 +510,7 @@ Hooks.on("getSceneControlButtons", (hudButtons) => {
 Hooks.on("ready", () => {
   var _a;
   module = game.modules.get(moduleId);
+  settingSetup();
   homeDisplayActions = new DisplayActions2e();
   module.displayActions2e = [homeDisplayActions];
   (_a = game.socket) == null ? void 0 : _a.on(socketEvent, (data) => {
