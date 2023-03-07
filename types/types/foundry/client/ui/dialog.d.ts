@@ -11,10 +11,10 @@ interface DialogButton {
     icon?: string;
     label?: string;
     condition?: boolean;
-    callback?: (html: JQuery) => void;
+    callback?: (html: JQuery) => void | Promise<void>;
 }
 
-interface ConfirmDialogParameters<Y extends unknown = true, N extends unknown = false> {
+interface ConfirmDialogParameters<Y = true, N = false> {
     title: string;
     content: string;
     yes?: () => Y;
@@ -65,7 +65,7 @@ interface ConfirmDialogParameters<Y extends unknown = true, N extends unknown = 
  * d.render(true);
  */
 declare class Dialog extends Application {
-    constructor(dialogData: DialogData, options?: ApplicationOptions);
+    constructor(dialogData: DialogData, options?: Partial<ApplicationOptions>);
 
     /* -------------------------------------------- */
     /*  Factory Methods                             */
@@ -95,7 +95,7 @@ declare class Dialog extends Application {
      *  defaultYes: false
      * });
      */
-    static confirm<Y extends unknown = true, N extends unknown = false>({
+    static confirm<Y = true, N = false>({
         title,
         content,
         yes,

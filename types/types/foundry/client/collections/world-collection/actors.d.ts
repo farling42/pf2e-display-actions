@@ -1,41 +1,28 @@
 /**
- * The Collection of Actor entities.
+ * The singleton collection of Actor documents which exist within the active World.
+ * This Collection is accessible within the Game object as game.actors.
+ * @category - Collections
  *
- * @see {@link Actor} The Actor entity.
- * @see {@link ActorDirectory} All Actors which exist in the world are rendered within the ActorDirectory sidebar tab.
+ * @see {@link Actor} The Actor document
+ * @see {@link ActorDirectory} The ActorDirectory sidebar directory
  *
- * @example <caption>Retrieve an existing Actor by its id</caption>
+ * @example Retrieve an existing Actor by its id
+ * ```js
  * let actor = game.actors.get(actorId);
+ * ```
  */
 declare class Actors<TActor extends Actor> extends WorldCollection<TActor> {
-    get documentName(): "Actor";
-
     /**
      * A mapping of synthetic Token Actors which are currently active within the viewed Scene.
      * Each Actor is referenced by the Token.id.
      */
-    tokens: { [tokenID: string]: TActor };
+    get tokens(): Record<string, TActor | undefined>;
 
-    /* -------------------------------------------- */
-    /*  Sheet Registration Methods                  */
-    /* -------------------------------------------- */
+    static override documentName: "Actor";
 
-    /**
-     * Register an Actor sheet class as a candidate which can be used to display Actors of a given type
-     * See EntitySheetConfig.registerSheet for details
-     */
-    static registerSheet<A extends ActorSheet>(
-        scope: string,
-        sheetClass: ConstructorOf<A>,
-        options?: RegisterSheetOptions,
-    ): void;
-    /** Unregister an Actor sheet class, removing it from the list of avaliable sheet Applications to use
-     * See EntitySheetConfig.unregisterSheet for details
-     */
-    static unregisterSheet<T extends ActorSheet>(scope: string, sheetClass: ConstructorOf<T>): void;
+    override fromCompendium(document: TActor | TActor["_source"], options?: FromCompendiumOptions): TActor["_source"];
+}
 
-    /**
-     * Return an Array of currently registered sheet classes for this Entity type
-     */
-    static get registeredSheets(): typeof ActorSheet[];
+declare interface Actors<TActor extends Actor> extends WorldCollection<TActor> {
+    get documentName(): "Actor";
 }

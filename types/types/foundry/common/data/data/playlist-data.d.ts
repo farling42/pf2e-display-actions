@@ -23,12 +23,12 @@ declare module foundry {
             folder: string;
             sort: number;
             seed: number;
-            permission: Record<string, PermissionLevel>;
+            permission: Record<string, DocumentOwnershipLevel>;
             flags: Record<string, unknown>;
         }
 
         class PlaylistData<
-            TDocument extends documents.BasePlaylist = documents.BasePlaylist,
+            TDocument extends documents.BasePlaylist = documents.BasePlaylist
         > extends abstract.DocumentData<TDocument> {
             static override defineSchema(): abstract.DocumentSchema;
 
@@ -40,5 +40,3 @@ declare module foundry {
         }
     }
 }
-
-declare type PlaylistMode = typeof CONST.PLAYLIST_MODES[keyof typeof CONST.PLAYLIST_MODES];

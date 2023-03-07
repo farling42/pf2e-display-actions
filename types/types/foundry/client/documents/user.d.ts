@@ -2,24 +2,20 @@ import { UserConstructor } from "./constructors";
 
 declare global {
     /**
-     * The client-side User document which extends the common BaseUser abstraction.
+     * The client-side User document which extends the common BaseUser model.
      * Each User document contains UserData which defines its data schema.
-     * @see {@link data.UserData}               The User data schema
+     *
      * @see {@link documents.Users}             The world-level collection of User documents
      * @see {@link applications.UserConfig}     The User configuration application
      */
     class User<TActor extends Actor = Actor> extends UserConstructor {
-        /** @override */
-        constructor(
-            data: PreCreate<foundry.data.UserSource>,
-            context?: DocumentConstructionContext<User>,
-        );
+        constructor(data: PreCreate<foundry.documents.UserSource>, context?: DocumentConstructionContext<null>);
 
         /** Track whether the user is currently active in the game */
         active: boolean;
 
         /** Track references to the current set of Tokens which are targeted by the User */
-        targets: Set<NonNullable<NonNullable<TActor["parent"]>["_object"]>>;
+        targets: Set<NonNullable<NonNullable<TActor["token"]>["object"]>>;
 
         /** Track the ID of the Scene that is currently being viewed by the User */
         viewedScene: string | null;
@@ -28,20 +24,16 @@ declare global {
         /*  User Properties                         */
         /* ---------------------------------------- */
 
-        /** Return the User avatar icon or the controlled actor's image */
-        get avatar(): string;
-
-        /** Return the Actor instance of the user's impersonated character (or undefined) */
-        get character(): TActor | undefined;
-
         /** A convenience shortcut for the permissions object of the current User */
-        get permissions(): Record<string, PermissionLevel>;
+        get permissions(): Record<string, DocumentOwnershipLevel>;
 
         /** A flag for whether the current User is a Trusted Player */
         get isTrusted(): boolean;
 
         /** A flag for whether this User is the connected client */
         get isSelf(): boolean;
+
+        override prepareDerivedData(): void;
 
         /**
          * Assign a Macro to a numbered hotbar slot between 1 and 50
@@ -53,7 +45,7 @@ declare global {
         assignHotbarMacro(
             macro: Macro | null,
             slot?: number | string,
-            { fromSlot }?: { fromSlot: number },
+            { fromSlot }?: { fromSlot?: number | undefined }
         ): Promise<this>;
 
         /**
@@ -92,12 +84,16 @@ declare global {
         updateTokenTargets(targetIds?: string[]): void;
 
         protected override _onUpdate(
-            changed: DeepPartial<this["data"]["_source"]>,
-            options: DocumentModificationContext,
-            userId: string,
+            changed: DeepPartial<foundry.documents.UserSource>,
+            options: DocumentModificationContext<this>,
+            userId: string
         ): void;
 
-        protected override _onDelete(options: DocumentModificationContext, userId: string): void;
+        protected override _onDelete(options: DocumentModificationContext<this>, userId: string): void;
+    }
+
+    interface User<TActor extends Actor = Actor> {
+        character: TActor | null | undefined;
     }
 
     interface UserActivity {
@@ -108,4 +104,9 @@ declare global {
         sceneId?: string;
         target?: string[];
     }
+
+    type Active<TUser extends User> = TUser & {
+        color: HexColorString;
+        border: HexColorString;
+    };
 }

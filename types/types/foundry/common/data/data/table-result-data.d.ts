@@ -20,7 +20,7 @@ declare module foundry {
         interface TableResultSource {
             type: TableResultType;
             text: string;
-            img: ImagePath;
+            img: ImageFilePath;
             collection: string;
             resultId: string;
             weight: number;
@@ -29,7 +29,7 @@ declare module foundry {
         }
 
         class TableResultData<
-            TDocument extends documents.BaseTableResult = documents.BaseTableResult,
+            TDocument extends documents.BaseTableResult = documents.BaseTableResult
         > extends abstract.DocumentData<TDocument> {
             static override defineSchema(): abstract.DocumentSchema;
         }
@@ -39,5 +39,3 @@ declare module foundry {
         }
     }
 }
-
-type TableResultType = typeof CONST.TABLE_RESULT_TYPES[keyof typeof CONST.TABLE_RESULT_TYPES];

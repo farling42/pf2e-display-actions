@@ -5,10 +5,7 @@ declare module foundry {
          * This concept is reused throughout Foundry VTT where a collection of uniquely identified elements is required.
          */
         interface Collection<V>
-            extends Omit<
-                Map<string, V>,
-                "forEach" | "delete" | "set" | SymbolConstructor["iterator"]
-            > {
+            extends Omit<Map<string, V>, "forEach" | "delete" | "set" | SymbolConstructor["iterator"]> {
             set(key: string, value: V): this;
 
             delete(key: string): boolean;
@@ -68,7 +65,7 @@ declare module foundry {
              * c.get("d"); // null
              * c.get("d", {strict: true}); // throws Error
              */
-            get<T extends V = V>(key: string, { strict }: { strict: true }): T;
+            get<T extends V = V>(key: string | null | undefined, { strict }: { strict: true }): T;
             get<T extends V = V>(key: string, { strict }?: { strict?: boolean }): T | undefined;
 
             /**
@@ -112,8 +109,10 @@ declare module foundry {
         }
 
         interface CollectionConstructor {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             new (): Collection<any>;
             new <V>(entries?: readonly (readonly [string, V])[] | null): Collection<V>;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             readonly prototype: Collection<any>;
         }
 
@@ -123,5 +122,3 @@ declare module foundry {
 
 declare type Collection<V> = foundry.utils.Collection<V>;
 declare const Collection: typeof foundry.utils.Collection;
-
-declare type CollectionValue<T> = T extends foundry.utils.Collection<infer U> ? U : never;

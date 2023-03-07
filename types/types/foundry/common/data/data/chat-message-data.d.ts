@@ -1,6 +1,3 @@
-declare type ChatMessageType =
-    typeof CONST.CHAT_MESSAGE_TYPES[keyof typeof CONST.CHAT_MESSAGE_TYPES];
-
 declare module foundry {
     module data {
         interface ChatMessageSource {
@@ -13,19 +10,30 @@ declare module foundry {
             speaker: ChatSpeakerSource;
             whisper: string[];
             blind: boolean;
-            roll: object;
-            sound: AudioPath;
+            rolls: (string | RollJSON)[];
+            sound: AudioFilePath;
             emote?: boolean;
-            flags: Record<string, unknown>;
+            flags: ChatMessageFlags;
         }
 
         class ChatMessageData<
-            TDocument extends documents.BaseChatMessage = documents.BaseChatMessage,
+            TDocument extends documents.BaseChatMessage = documents.BaseChatMessage
         > extends abstract.DocumentData<TDocument> {
             static override defineSchema(): abstract.DocumentSchema;
         }
+
         interface ChatMessageData extends ChatMessageSource {
             readonly _source: ChatMessageSource;
+
+            roll: string;
         }
+
+        type ChatMessageFlags = DocumentFlags & {
+            core?: {
+                canPopout?: boolean;
+                initiativeRoll?: boolean;
+                RollTable?: string;
+            };
+        };
     }
 }

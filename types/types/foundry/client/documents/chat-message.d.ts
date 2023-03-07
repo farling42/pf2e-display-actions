@@ -8,14 +8,11 @@ declare global {
      * @see {@link documents.Messages} The world-level collection of ChatMessage documents
      */
     class ChatMessage<TActor extends Actor = Actor> extends ChatMessageConstructor {
-        /** @override */
-        constructor(
-            data: PreCreate<foundry.data.ChatMessageSource>,
-            context?: DocumentConstructionContext<ChatMessage>,
-        );
+        constructor(data: PreCreate<foundry.data.ChatMessageSource>, context?: DocumentConstructionContext<null>);
 
-        /** If the chat message contains a Roll instance, cache it here */
-        protected _roll: Rolled<Roll> | null;
+        flavor: string;
+
+        _rollExpanded: boolean;
 
         /**
          * Return the recommended String alias for this message.
@@ -36,9 +33,6 @@ declare global {
         /** Test whether the chat message contains a dice roll */
         get isRoll(): boolean;
 
-        /** Return the Roll instance contained in this chat message, if one is present */
-        readonly roll: Rolled<Roll> | null;
-
         /**
          * Return whether the ChatMessage is visible to the current User.
          * Messages may not be visible if they are private whispers.
@@ -46,9 +40,7 @@ declare global {
         override get visible(): boolean;
 
         /** The User who created the chat message. */
-        get user(): User<TActor> | undefined;
-
-        get flags(): Record<string, unknown>;
+        get user(): User | undefined;
 
         override prepareData(): void;
 
@@ -60,15 +52,12 @@ declare global {
          */
         static applyRollMode(
             chatData: foundry.data.ChatMessageSource,
-            rollMode: RollMode,
+            rollMode: RollMode
         ): foundry.data.ChatMessageSource;
-        static applyRollMode(
-            chatData: foundry.data.ChatMessageData,
-            rollMode: RollMode,
-        ): foundry.data.ChatMessageData;
+        static applyRollMode(chatData: foundry.data.ChatMessageData, rollMode: RollMode): foundry.data.ChatMessageData;
         static applyRollMode(
             chatData: foundry.data.ChatMessageSource | foundry.data.ChatMessageData,
-            rollMode: RollMode,
+            rollMode: RollMode
         ): foundry.data.ChatMessageSource | foundry.data.ChatMessageData;
 
         /**
@@ -145,9 +134,7 @@ declare global {
          * Obtain an Actor instance which represents the speaker of this message (if any)
          * @param speaker The speaker data object
          */
-        static getSpeakerActor(
-            speaker: foundry.data.ChatSpeakerSource | foundry.data.ChatSpeakerData,
-        ): Actor | null;
+        static getSpeakerActor(speaker: DeepPartial<foundry.data.ChatSpeakerSource>): Actor | null;
 
         /** Obtain a data object used to evaluate any dice rolls associated with this particular chat message */
         getRollData(): object;
@@ -162,22 +149,28 @@ declare global {
         /** Render the HTML for the ChatMessage which should be added to the log */
         getHTML(): Promise<JQuery>;
 
+        /**
+         * Render the inner HTML content for ROLL type messages.
+         * @param messageData      The chat message data used to render the message HTML
+         */
+        protected _renderRollContent: (messageData: ChatMessageRenderData) => Promise<void>;
+
         protected override _preUpdate(
-            data: Partial<foundry.data.ChatMessageSource>,
-            options: DocumentModificationContext,
-            user: User,
+            changed: DeepPartial<foundry.data.ChatMessageSource>,
+            options: DocumentModificationContext<this>,
+            user: User<TActor>
         ): Promise<void>;
 
         protected override _onCreate(
             data: foundry.data.ChatMessageSource,
-            options: DocumentModificationContext,
-            userId: string,
+            options: DocumentModificationContext<this>,
+            userId: string
         ): void;
 
         protected override _onUpdate(
-            changed: DeepPartial<this["data"]["_source"]>,
-            options: DocumentModificationContext,
-            userId: string,
+            changed: DeepPartial<this["_source"]>,
+            options: DocumentModificationContext<this>,
+            userId: string
         ): void;
 
         protected override _onDelete(options: DocumentModificationContext, userId: string): void;
@@ -186,30 +179,39 @@ declare global {
         export(): string;
     }
 
-    interface ChatMessage {
-        readonly data: foundry.data.ChatMessageData<this>;
-        readonly parent: null;
-    }
-
     namespace ChatMessage {
         function create<T extends ChatMessage>(
             this: ConstructorOf<T>,
-            data: PreCreate<T["data"]["_source"]>[],
-            context?: ChatMessageModificationContext,
+            data: PreCreate<T["_source"]>[],
+            context?: ChatMessageModificationContext
         ): Promise<T[]>;
         function create<T extends ChatMessage>(
             this: ConstructorOf<T>,
-            data: PreCreate<T["data"]["_source"]>,
-            context?: ChatMessageModificationContext,
+            data: PreCreate<T["_source"]>,
+            context?: ChatMessageModificationContext
         ): Promise<T | undefined>;
         function create<T extends ChatMessage>(
             this: ConstructorOf<T>,
-            data: PreCreate<T["data"]["_source"]>[] | PreCreate<T["data"]["_source"]>,
-            context?: ChatMessageModificationContext,
+            data: PreCreate<T["_source"]>[] | PreCreate<T["_source"]>,
+            context?: ChatMessageModificationContext
         ): Promise<T[] | T | undefined>;
+
+        const implementation: typeof ChatMessage;
     }
 
     interface ChatMessageModificationContext extends DocumentModificationContext {
-        rollMode?: RollMode;
+        rollMode?: RollMode | "roll";
+    }
+
+    interface ChatMessageRenderData {
+        message: RawObject<foundry.data.ChatMessageData>;
+        user: User;
+        author: User;
+        alias: string;
+        borderColor?: string;
+        cssClass: string;
+        isWhisper: number;
+        canDelete: boolean;
+        whisperTo: string;
     }
 }

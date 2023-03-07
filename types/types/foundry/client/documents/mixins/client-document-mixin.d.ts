@@ -3,9 +3,7 @@
  * This mixin provides the client-side interface for database operations and common document behaviors.
  * @mixin
  */
-declare function ClientDocumentMixin<T extends typeof foundry.abstract.Document>(
-    Base: T,
-): ClientDocumentMixin<T>;
+declare function ClientDocumentMixin<T extends typeof foundry.abstract.Document>(Base: T): ClientDocumentMixin<T>;
 
 declare type ClientDocumentMixin<T extends typeof foundry.abstract.Document> = {
     new (...args: any[]): ClientDocument<InstanceType<T>> & InstanceType<T>;
@@ -19,7 +17,7 @@ declare type ClientDocumentMixin<T extends typeof foundry.abstract.Document> = {
      */
     createDialog(
         data?: { folder?: string },
-        options?: FormApplicationOptions,
+        options?: Partial<FormApplicationOptions>
     ): Promise<ClientDocument<InstanceType<T>> | undefined>;
 
     /**
@@ -35,26 +33,25 @@ declare type ClientDocumentMixin<T extends typeof foundry.abstract.Document> = {
      *                                    World-level Document reference
      * @return The Document data that should be handled by the drop handler
      */
-    fromDropData<T extends typeof foundry.abstract.Document>(
-        this: T,
-        data: object,
-        { importWorld }?: { importWorld?: boolean },
-    ): Promise<InstanceType<T> | undefined>;
+    fromDropData<TDocument extends ClientDocument>(
+        this: ConstructorOf<TDocument>,
+        data: DropCanvasData<TDocument["documentName"]>,
+        { importWorld }?: { importWorld?: boolean }
+    ): Promise<TDocument | undefined>;
 } & T;
 
-declare class ClientDocument<
-    TDocument extends foundry.abstract.Document = foundry.abstract.Document,
-> extends foundry.abstract.Document {
+declare class ClientDocument<TDocument extends foundry.abstract.Document = foundry.abstract.Document> extends foundry
+    .abstract.Document {
     /**
      * A collection of Application instances which should be re-rendered whenever this document is updated.
      * The keys of this object are the application ids and the values are Application instances. Each
      * Application in this object will have its render method called by {@link Document#render}.
      * @see {@link Document#render}
      */
-    override apps: Record<string, Application>;
+    apps: Record<number, Application>;
 
     /** A cached reference to the FormApplication instance used to configure this Document. */
-    _sheet: FormApplication | null;
+    protected _sheet: FormApplication | null;
 
     protected override _initialize(): void;
 
@@ -96,20 +93,22 @@ declare class ClientDocument<
 
     /**
      * Return the permission level that the current game User has over this Document.
-     * See the CONST.ENTITY_PERMISSIONS object for an enumeration of these levels.
+     * See the CONST.DOCUMENT_OWNERSHIP_LEVELS object for an enumeration of these levels.
      *
-     * @example
+     * @example Get the permission level the current user has for a document
+     * ```js
      * game.user.id; // "dkasjkkj23kjf"
      * actor.data.permission; // {default: 1, "dkasjkkj23kjf": 2};
      * actor.permission; // 2
+     * ```
      */
-    get permission(): PermissionLevel;
+    get permission(): DocumentOwnershipLevel;
 
     /** Lazily obtain a FormApplication instance used to configure this Document, or null if no sheet is available. */
-    get sheet(): NonNullable<this["_sheet"]>;
+    get sheet(): FormApplication<this> | null;
 
     /** A Universally Unique Identifier (uuid) for this Document instance. */
-    get uuid(): string;
+    get uuid(): DocumentUUID;
 
     /**
      * A boolean indicator for whether or not the current game User has at least limited visibility for this Document.
@@ -122,7 +121,7 @@ declare class ClientDocument<
     /* -------------------------------------------- */
 
     /** Obtain the FormApplication class constructor which should be used to configure this Document. */
-    protected _getSheetClass(): ConstructorOf<NonNullable<this["_sheet"]>>;
+    protected _getSheetClass(): ConstructorOf<FormApplication>;
 
     /**
      * Prepare data for the Document.
@@ -135,7 +134,7 @@ declare class ClientDocument<
     prepareBaseData(): void;
 
     /** Prepare all embedded Document instances which exist within this primary Document. */
-    prepareEmbeddedEntities(): void;
+    prepareEmbeddedDocuments(): void;
 
     /**
      * Apply transformations or derivations to the values of the source data object.
@@ -154,21 +153,23 @@ declare class ClientDocument<
     /**
      * Determine the sort order for this Document by positioning it relative a target sibling.
      * See SortingHelper.performIntegerSort for more details
-     * @param [options] Sorting options provided to SortingHelper.performIntegerSort
+     * @param [options]     Sorting options provided to SortingHelper.performIntegerSort
+     * @param [updateData]  Additional data changes which are applied to each sorted document
+     * @param [sortOptions] Options which are passed to the SortingHelpers.performIntegerSort method
      * @returns The Document after it has been re-sorted
      */
-    sortRelative({
+    sortRelative<TObject extends object>({
         target,
         siblings,
         sortKey,
         sortBefore,
         updateData,
     }: {
-        target?: any;
-        siblings?: any[];
-        sortKey?: string;
+        target?: TObject;
+        siblings?: TObject[];
+        sortKey?: keyof TObject;
         sortBefore?: boolean;
-        updateData?: any;
+        updateData?: object;
     }): Promise<this>;
 
     /* -------------------------------------------- */
@@ -176,15 +177,15 @@ declare class ClientDocument<
     /* -------------------------------------------- */
 
     protected override _onCreate(
-        data: this["data"]["_source"],
-        options: DocumentModificationContext,
-        userId: string,
+        data: this["_source"],
+        options: DocumentModificationContext<this>,
+        userId: string
     ): void;
 
     protected override _onUpdate(
-        changed: DeepPartial<this["data"]["_source"]>,
-        options: DocumentModificationContext,
-        userId: string,
+        changed: DeepPartial<this["_source"]>,
+        options: DocumentModificationContext<this>,
+        userId: string
     ): void;
 
     protected override _onDelete(options: DocumentModificationContext, userId: string): void;
@@ -198,9 +199,9 @@ declare class ClientDocument<
      */
     protected _preCreateEmbeddedDocuments(
         embeddedName: string,
-        result: ClientDocument["data"]["_source"][],
+        result: ClientDocument["_source"][],
         options: DocumentModificationContext,
-        userId: string,
+        userId: string
     ): void;
 
     /**
@@ -214,9 +215,9 @@ declare class ClientDocument<
     protected _onCreateEmbeddedDocuments(
         embeddedName: string,
         documents: ClientDocument[],
-        result: ClientDocument["data"]["_source"][],
+        result: ClientDocument["_source"][],
         options: DocumentModificationContext,
-        userId: string,
+        userId: string
     ): void;
 
     /**
@@ -228,9 +229,9 @@ declare class ClientDocument<
      */
     protected _preUpdateEmbeddedDocuments(
         embeddedName: string,
-        result: ClientDocument["data"]["_source"][],
+        result: ClientDocument["_source"][],
         options: DocumentModificationContext,
-        userId: string,
+        userId: string
     ): void;
 
     /**
@@ -244,9 +245,9 @@ declare class ClientDocument<
     protected _onUpdateEmbeddedDocuments(
         embeddedName: string,
         documents: ClientDocument[],
-        result: ClientDocument["data"]["_source"][],
+        result: ClientDocument["_source"][],
         options: DocumentModificationContext,
-        userId: string,
+        userId: string
     ): void;
 
     /**
@@ -258,9 +259,9 @@ declare class ClientDocument<
      */
     protected _preDeleteEmbeddedDocuments(
         embeddedName: string,
-        result: ClientDocument["data"]["_source"][],
+        result: ClientDocument["_source"][],
         options: DocumentModificationContext,
-        userId: string,
+        userId: string
     ): void;
 
     /**
@@ -274,9 +275,9 @@ declare class ClientDocument<
     protected _onDeleteEmbeddedDocuments(
         embeddedName: string,
         documents: ClientDocument[],
-        result: ClientDocument["data"]["_source"][],
+        result: ClientDocument["_source"][],
         options: DocumentModificationContext,
-        userId: string,
+        userId: string
     ): void;
 
     /**
@@ -306,5 +307,11 @@ declare class ClientDocument<
      * @param [pack] A specific pack being exported to
      * @return A data object of cleaned data suitable for compendium import
      */
-    toCompendium(pack: CompendiumCollection<any>): this["data"]["_source"];
+    toCompendium(pack: CompendiumCollection<any>): this["_source"];
+
+    /**
+     * Serialize salient information about this Document when dragging it.
+     * @return An object of drag data.
+     */
+    toDragData(): { type: string; [key: string]: unknown };
 }

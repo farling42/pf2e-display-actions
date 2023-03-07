@@ -32,12 +32,12 @@ declare module foundry {
             width: number;
             borderColor: HexColorString;
             fillColor: HexColorString;
-            texture: ImagePath;
+            texture: ImageFilePath;
             flags: Record<string, unknown>;
         }
 
         class MeasuredTemplateData<
-            TDocument extends documents.BaseMeasuredTemplate = documents.BaseMeasuredTemplate,
+            TDocument extends documents.BaseMeasuredTemplate = documents.BaseMeasuredTemplate
         > extends abstract.DocumentData<TDocument> {
             static override defineSchema(): abstract.DocumentSchema;
 
@@ -51,6 +51,3 @@ declare module foundry {
         }
     }
 }
-
-declare type MeasuredTemplateType =
-    typeof CONST.MEASURED_TEMPLATE_TYPES[keyof typeof CONST.MEASURED_TEMPLATE_TYPES];
