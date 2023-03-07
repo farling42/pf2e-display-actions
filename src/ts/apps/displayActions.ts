@@ -76,6 +76,7 @@ export class DisplayActions2e extends Application {
         this.state.classNameListReactions,
       ),
       isLinkedToActor: this.state.isLinkedToToken,
+      isLinkActorButtonHidden: !(game.settings.get(moduleId, 'DisplayActions2e.Settings.LinkActorId') as boolean),
     };
   }
 
@@ -167,8 +168,12 @@ export class DisplayActions2e extends Application {
       onclick: () => this._onHeaderDuplication(),
     };
 
-    buttons.unshift(headerButton);
-    buttons.unshift(headerButtonDuplication);
+    if (game.settings.get(moduleId, 'DisplayActions2e.Settings.ShowPlayerId') !== 'Hide') {
+      buttons.unshift(headerButton);
+    }
+    if (game.settings.get(moduleId, 'DisplayActions2e.Settings.DuplicateId') as boolean) {
+      buttons.unshift(headerButtonDuplication);
+    }
 
     return buttons;
   }
