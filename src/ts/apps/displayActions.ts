@@ -8,8 +8,8 @@ import {SelectiveShowApp} from './selectiveShow';
 
 export class DisplayActions2e extends Application {
   protected clickString = 'symbolClick';
-  protected actionImage = '/systems/pf2e/icons/actions/OneAction.webp';
-  protected reactionImage = '/systems/pf2e/icons/actions/Reaction.webp';
+  protected actionImage = 'systems/pf2e/icons/actions/OneAction.webp';
+  protected reactionImage = 'systems/pf2e/icons/actions/Reaction.webp';
   protected defaultNumOfActions = 3;
   protected defaultNumOfReactions = 1;
   protected isLinkedToActor = false;
