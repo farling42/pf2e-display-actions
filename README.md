@@ -50,7 +50,8 @@ Currently WIP I may have missed many interactions.
   - all buttons can be turned off and on in the settings now
 ##### v 1.10.1
 - fixed [#15](https://github.com/MoonIsFalling/pf2e-display-actions/issues/15)
-  
+#### v 1.11.0
+- added support for v11 of Foundry
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
     - include better handling
