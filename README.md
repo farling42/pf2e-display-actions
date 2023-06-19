@@ -48,6 +48,8 @@ Currently WIP I may have missed many interactions.
 #### v 1.10.0
 - settings are here to stay!
   - all buttons can be turned off and on in the settings now
+##### v 1.10.1
+- fixed [#15](https://github.com/MoonIsFalling/pf2e-display-actions/issues/15)
   
 ## Roadmap
 - make the amount of actions and reactions based on the selected token
