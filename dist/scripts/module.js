@@ -120,8 +120,8 @@ class DisplayActions2e extends Application {
     var _a;
     super();
     this.clickString = "symbolClick";
-    this.actionImage = "/systems/pf2e/icons/actions/OneAction.webp";
-    this.reactionImage = "/systems/pf2e/icons/actions/Reaction.webp";
+    this.actionImage = "systems/pf2e/icons/actions/OneAction.webp";
+    this.reactionImage = "systems/pf2e/icons/actions/Reaction.webp";
     this.defaultNumOfActions = 3;
     this.defaultNumOfReactions = 1;
     this.isLinkedToActor = false;
