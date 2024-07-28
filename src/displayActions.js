@@ -8,7 +8,6 @@ export class DisplayActions2e extends Application {
   reactionImage = 'systems/pf2e/icons/actions/Reaction.webp';
   defaultNumOfActions = 3;
   defaultNumOfReactions = 1;
-  isLinkedToActor = false;
 
   state = {
     numOfActions: this.defaultNumOfActions,
@@ -17,8 +16,7 @@ export class DisplayActions2e extends Application {
     classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
     sentFromUserId: String(game.userId),
     userListPermissions: [String(game.userId)],
-    tokenId: undefined,
-    isLinkedToToken: this.isLinkedToActor,
+    actorUuid: undefined,
     duplicationNr: 0,
   };
 
@@ -35,13 +33,27 @@ export class DisplayActions2e extends Application {
   get title() {
     let title = game.i18n.localize('DisplayActions2e.WindowTitle');
 
-    if (this.state.isLinkedToToken) {
-      title = title.concat(this.#getTitleToken());
+    if (this.state.actorUuid) {
+      title += ` for ${fromUuidSync(this.state.actorUuid).name}`;
     }
 
-    title = title.concat(this.#getTitleSentFrom());
-    title = title.concat(this.#getTitleDuplication());
+    if (this.state.sentFromUserId !== game.userId) {
+      const name = game.users?.find((user) => {
+        return user.id === this.state.sentFromUserId;
+      })?.name;
+      title += ` sent from ${name}`;
+    }
+
+    if (this.state.duplicationNr > 0) {
+      title += ` (${this.state.duplicationNr})`;
+    }
     return title;
+  }
+
+  get appId() {
+    let result = 'DisplayActions2e';
+    if (data.actorId) result += `${actorId}`;
+    if (newState.duplicationNr) result += `-${newState.duplicationNr}`;
   }
 
   static get defaultOptions() {
@@ -71,7 +83,7 @@ export class DisplayActions2e extends Application {
         {reactionImage: this.reactionImage},
         this.state.classNameListReactions,
       ),
-      isLinkedToActor: this.state.isLinkedToToken,
+      isLinkedToActor: !!this.state.actorUuid,
       isLinkActorButtonHidden: !game.settings.get(moduleId, 'DisplayActions2e.Settings.LinkActorId'),
     };
   }
@@ -227,41 +239,10 @@ export class DisplayActions2e extends Application {
     return foundry.utils.deepClone(this.state);
   }
 
-  /**
-   * The following functions are only done because transpilation is bullying me and thus i cannot do an child of this class
-   */
-  #getTitleToken() {
-    let title = '';
-
-    let name = canvas.tokens.get(this.state.tokenId);
-    title = title.concat(' for ', String(name?.name));
-    return title;
-  }
-
-  #getTitleSentFrom() {
-    if (this.state.sentFromUserId === game.userId) {
-      return '';
-    }
-    let title = ' sent from ';
-    let name = game.users?.find((user) => {
-      return user.id === this.state.sentFromUserId;
-    })?.name;
-    return title.concat(name);
-  }
-
-  #getTitleDuplication() {
-    let title = '';
-    if (this.state.duplicationNr > 0) {
-      title = title.concat(' (', String(this.state.duplicationNr), ')');
-    }
-    return title;
-  }
-
   #_onButtonClickSelectedActors() {
     canvas.tokens.controlled.forEach((token) => {
       let newState = foundry.utils.deepClone(this.state);
-      newState.isLinkedToToken = true;
-      newState.tokenId = token.id;
+      newState.actorUuid = token.actor.uuid;
       newState = this.#generateActionsFromConditions(newState);
 
       handleToken({
@@ -288,9 +269,9 @@ export class DisplayActions2e extends Application {
   }
 
   #generateActionsFromConditions(oldState) {
-    let newState = foundry.utils.deepClone(oldState);
+    const newState = foundry.utils.deepClone(oldState);
 
-    const actor = canvas.tokens.get(oldState.tokenId)?.document.actor;
+    const actor = fromUuidSync(oldState.actorUuid);
 
     const [numOfActions, numOfReactions] = actionsFromConditions(actor.conditions);
 

@@ -27,7 +27,7 @@ export class SelectiveShowApp extends FormApplication {
   }
 
   async getData() {
-    let data = await super.getData();
+    const data = await super.getData();
     // 👇️ ts-ignore ignores any ts errors on the next line
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -41,7 +41,6 @@ export class SelectiveShowApp extends FormApplication {
     html.find('.show').click(ev => {
       ev.preventDefault();
       this._updateObject();
-      // let selector = $(ev.currentTarget).parents('form').find('select');
       game.socket?.emit(socketEvent, {
         operation: 'showToSelection',
         state: this.#displayActionState,
@@ -94,7 +93,7 @@ export class SelectiveShowApp extends FormApplication {
   }
 
   _updateObject() {
-    let selector = Array.from(
+    const selector = Array.from(
       document.getElementsByClassName('selective-show-form')[0].children[0].children[0].children[0].children,
     );
     this.#userNameList = selector.map((element) => {
@@ -108,7 +107,7 @@ export class SelectiveShowApp extends FormApplication {
     });
 
     // active User Id needs to be send always
-    let activeUserId = game.userId;
+    const activeUserId = game.userId;
     if (activeUserId) {
       if (!this.#userNameList.includes(activeUserId)) {
         this.#userNameList.push(activeUserId);

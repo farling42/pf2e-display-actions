@@ -1,11 +1,8 @@
-// Do not remove this import. If you do Vite will think your styles are dead
-// code and not include them in the build output.
 import {moduleId, socketEvent} from './constants.js';
 import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './utils.js';
 import {DisplayActions2e} from './displayActions.js';
 import {settingSetup} from './settings.js';
 
-let module;
 let homeDisplayActions;
 
 // Foundry Hooks
@@ -14,11 +11,11 @@ Hooks.once('init', () => {
 });
 
 Hooks.on('getSceneControlButtons', (hudButtons) => {
-  let hud = hudButtons.find((value) => {
+  const hud = hudButtons.find((value) => {
     return value.name === 'token';
   });
 
-  let tool = {
+  const tool = {
     name: 'DisplayActions2e.ButtonName',
     title: 'DisplayActions2e.ButtonHint',
     icon: 'pf2-icon icon-action',
@@ -34,7 +31,7 @@ Hooks.on('getSceneControlButtons', (hudButtons) => {
 });
 
 Hooks.on('ready', () => {
-  module = game.modules.get(moduleId);
+  const module = game.modules.get(moduleId);
   settingSetup();
   homeDisplayActions = new DisplayActions2e();
 
