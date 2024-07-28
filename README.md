@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/farling42/pf2e-display-actions)
 ![Foundry Info](https://img.shields.io/badge/Foundry-v11-informational)
 ![Latest Release Download Count](https://img.shields.io/github/downloads/farling42/pf2e-display-actions/latest/module.zip)
-![Forge installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fpdf-pager)
+![Forge installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fpf2e-display-actions)
 
 # Pf2e Display Actions
 
@@ -33,6 +33,10 @@ Currently WIP I may have missed many interactions.
     - include better handling
 - beautify the Dialog
 - better titles
+
+### Manual Installation
+
+Use the manifest path https://github.com/farling42/pf2e-display-actions/releases/latest/download/module.json
 
 ## Credits
 - The old TS version used BringingFire's [Blog](https://bringingfire.com/blog/intro-to-foundry-module-development) and respective [template](https://github.com/BringingFire/foundry-module-ts-template)
