@@ -9,8 +9,8 @@ export class SelectiveShowApp extends FormApplication {
 
   constructor(users, state) {
     super(users);
-    this.userNameList = users;
-    this.displayActionState = state;
+    this.#userNameList = users;
+    this.#displayActionState = state;
   }
 
   static get defaultOptions() {
@@ -44,9 +44,9 @@ export class SelectiveShowApp extends FormApplication {
       // let selector = $(ev.currentTarget).parents('form').find('select');
       game.socket?.emit(socketEvent, {
         operation: 'showToSelection',
-        state: this.displayActionState,
+        state: this.#displayActionState,
         user: game.userId,
-        userList: this.userNameList,
+        userList: this.#userNameList,
       });
       this.close();
     });
@@ -56,7 +56,7 @@ export class SelectiveShowApp extends FormApplication {
 
       game.socket?.emit(socketEvent, {
         operation: 'showToAll',
-        state: this.displayActionState,
+        state: this.#displayActionState,
         user: game.userId,
       });
 
@@ -67,13 +67,13 @@ export class SelectiveShowApp extends FormApplication {
       ev.preventDefault();
       this._updateObject();
 
-      this.displayActionState.userListPermissions = this.userNameList;
+      this.#displayActionState.userListPermissions = this.#userNameList;
 
       game.socket?.emit(socketEvent, {
         operation: 'showWithPermission',
-        state: this.displayActionState,
+        state: this.#displayActionState,
         user: game.userId,
-        userList: this.userNameList,
+        userList: this.#userNameList,
       });
 
       this.close();
@@ -85,7 +85,7 @@ export class SelectiveShowApp extends FormApplication {
 
       handleSendToChat({
         operation: 'sendToChat',
-        state: this.displayActionState,
+        state: this.#displayActionState,
         user: game.userId,
       });
 
@@ -97,7 +97,7 @@ export class SelectiveShowApp extends FormApplication {
     let selector = Array.from(
       document.getElementsByClassName('selective-show-form')[0].children[0].children[0].children[0].children,
     );
-    this.userNameList = selector.map((element) => {
+    this.#userNameList = selector.map((element) => {
       // 👇️ ts-ignore ignores any ts errors on the next line
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -110,8 +110,8 @@ export class SelectiveShowApp extends FormApplication {
     // active User Id needs to be send always
     let activeUserId = game.userId;
     if (activeUserId) {
-      if (!this.userNameList.includes(activeUserId)) {
-        this.userNameList.push(activeUserId);
+      if (!this.#userNameList.includes(activeUserId)) {
+        this.#userNameList.push(activeUserId);
       }
     }
     return new Promise<unknown>(() => {});
@@ -125,7 +125,7 @@ export class SelectiveShowApp extends FormApplication {
       case 'Chat':
         handleSendToChat({
           operation: 'sendToChat',
-          state: this.displayActionState,
+          state: this.#displayActionState,
           user: game.userId,
         });
         break;
@@ -134,6 +134,6 @@ export class SelectiveShowApp extends FormApplication {
       default:
         break;
     }
-    this.displayActionState = state;
+    this.#displayActionState = state;
   }
 }

@@ -22,7 +22,7 @@ export class DisplayActions2e extends Application {
     duplicationNr: 0,
   };
 
-  showPlayerHandler = new SelectiveShowApp([String(game.user?.name)], this.state);
+  showPlayerHandler = new SelectiveShowApp([game.user.name], this.state);
 
   constructor(newState) {
     super();
@@ -82,7 +82,6 @@ export class DisplayActions2e extends Application {
     if (this.state.userListPermissions.includes(String(game.userId))) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
-      // html.find('button.actorLink').on('click', DataWrapper2e.createApplications);
       html.find('button.actorLink').on('click', this.#_onButtonClickSelectedActors.bind(this));
       html.find('button.actorUpdate').on('click', this.#_onButtonClickUpdateActors.bind(this));
     }
@@ -279,7 +278,7 @@ export class DisplayActions2e extends Application {
   }
 
   #_onHeaderDuplication() {
-    let newState = foundry.utils.deepClone(this.state);
+    const newState = foundry.utils.deepClone(this.state);
 
     handleDuplication({
       operation: 'duplication',
@@ -291,11 +290,9 @@ export class DisplayActions2e extends Application {
   #generateActionsFromConditions(oldState) {
     let newState = foundry.utils.deepClone(oldState);
 
-    let actor = canvas.tokens.get(oldState.tokenId)?.document.actor;
+    const actor = canvas.tokens.get(oldState.tokenId)?.document.actor;
 
-    let conditions = actor.conditions;
-
-    let [numOfActions, numOfReactions] = actionsFromConditions(conditions);
+    const [numOfActions, numOfReactions] = actionsFromConditions(actor.conditions);
 
     newState.numOfActions = numOfActions;
     newState.numOfReactions = numOfReactions;
