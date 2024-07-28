@@ -2,6 +2,8 @@ import {moduleId, socketEvent} from './constants.js';
 import {actionsFromConditions, handleDuplication, handleToken} from './utils.js';
 import {SelectiveShowApp} from './selectiveShow.js';
 
+let hookset = false;
+
 export class DisplayActions2e extends Application {
   clickString = 'symbolClick';
   actionImage = 'systems/pf2e/icons/actions/OneAction.webp';
@@ -27,6 +29,13 @@ export class DisplayActions2e extends Application {
 
     if (newState) {
       this.state = newState;
+    }
+
+    if (!hookset) {
+      hookset = true;
+      if (game.settings.get(moduleId, 'DisplayActions2e.Settings.UpdateTurnStart')) {
+        Hooks.on('pf2e.startTurn', startTurnUpdate);
+      }
     }
   }
 
@@ -243,7 +252,7 @@ export class DisplayActions2e extends Application {
     canvas.tokens.controlled.forEach((token) => {
       let newState = foundry.utils.deepClone(this.state);
       newState.actorUuid = token.actor.uuid;
-      newState = this.#generateActionsFromConditions(newState);
+      newState = this.generateActionsFromConditions(newState);
 
       handleToken({
         operation: 'token',
@@ -254,7 +263,7 @@ export class DisplayActions2e extends Application {
   }
 
   #_onButtonClickUpdateActors() {
-    this.state = this.#generateActionsFromConditions(this.state);
+    this.state = this.generateActionsFromConditions(this.state);
     this.render();
   }
 
@@ -268,7 +277,7 @@ export class DisplayActions2e extends Application {
     });
   }
 
-  #generateActionsFromConditions(oldState) {
+  generateActionsFromConditions(oldState) {
     const newState = foundry.utils.deepClone(oldState);
 
     const actor = fromUuidSync(oldState.actorUuid);
@@ -281,3 +290,20 @@ export class DisplayActions2e extends Application {
     return newState;
   }
 }
+
+function startTurnUpdate(combatant, encounter, userId) {
+  // Find APP for the actor
+  const module = game.modules.get(moduleId);
+  const actorUuid = combatant.actor.uuid;
+
+  const app = module.displayActions2e.find(app => {
+    const appState = app.getState();
+    return appState.actorUuid === actorUuid;
+  });
+
+  if (app) {
+    app.state = app.generateActionsFromConditions(app.state);
+    app.render();
+  }
+}
+

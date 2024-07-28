@@ -31,7 +31,7 @@ export class SelectiveShowApp extends FormApplication {
     // 👇️ ts-ignore ignores any ts errors on the next line
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    data.users = game.users.filter(u => u.active && u.id != game.user.id);
+    data.users = game.users.filter(user => user.active && user.id != game.user.id);
     return data;
   }
 

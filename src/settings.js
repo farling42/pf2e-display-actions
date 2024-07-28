@@ -17,6 +17,14 @@ export function settingSetup() {
     type: Boolean,
     default: false,
   });
+  game.settings.register(moduleId, 'DisplayActions2e.Settings.UpdateTurnStart', {
+    name: 'DisplayActions2e.Settings.UpdateTurnStart',
+    hint: 'DisplayActions2e.Settings.UpdateTurnStartHint',
+    config: true,
+    scope: 'client',
+    type: Boolean,
+    default: false,
+  });
   game.settings.register(moduleId, 'DisplayActions2e.Settings.ShowPlayerId', {
     name: 'DisplayActions2e.Settings.ShowPlayerSetting',
     hint: 'DisplayActions2e.Settings.ShowPlayerHint',

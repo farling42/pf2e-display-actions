@@ -1,15 +1,15 @@
-import {DisplayActions2e} from './displayActions.js';
-import {condtionModifierTable, moduleId} from './constants.js';
+import { DisplayActions2e } from './displayActions.js';
+import { condtionModifierTable, moduleId } from './constants.js';
 
 export function handleShowToAll(data) {
   const dialog = checkAndBuildApp(data);
-  dialog.render(true, {id: dialog.appId});
+  dialog.render(true, { id: dialog.appId });
 }
 
 export function handleShowToSelection(data) {
   if (data.userList?.includes(String(game.userId))) {
     const dialog = checkAndBuildApp(data);
-    dialog.render(true, {id: dialog.appId});
+    dialog.render(true, { id: dialog.appId });
   }
 }
 
@@ -18,26 +18,22 @@ export function handleShowWithPermission(data) {
 }
 
 export function handleUpdate(data) {
-  const module = game.modules.get(moduleId);
-  const nameInTitle = game.users?.find((user) => {
-    return user.id === data.state.sentFromUserId;
-  })?.name;
+  // Not an actor-specific update, so ignore it
+  if (!data.state.actorUuid) return;
 
-  if (nameInTitle) {
-    module.displayActions2e.forEach(app => {
-      // check for title OR own application update
-      // this is why checkForApp cannot be used
-      if (app.title.includes(nameInTitle) || data.state.sentFromUserId === game.userId) {
-        app.setState(data.state);
-        app.render(false, {id: dialog.appId});
-      }
-    });
-  }
+  const module = game.modules.get(moduleId);
+
+  module.displayActions2e.forEach(app => {
+    if (app.state.actorUuid === data.state.actorUuid) {
+      app.setState(data.state);
+      app.render(true);
+    }
+  });
 }
 
 export function handleToken(data) {
   const dialog = checkAndBuildApp(data);
-  dialog.render(true, {id: dialog.appId});
+  dialog.render(true, { id: dialog.appId });
 }
 
 export function handleDuplication(data) {
@@ -55,10 +51,9 @@ export function handleDuplication(data) {
   );
 
   const dialog = new DisplayActions2e(newState);
-  const module = game.modules.get(moduleId);
-  dialog.render(true, {id: dialog.appId});
+  dialog.render(true, { id: dialog.appId });
   // push into list to wait for updates
-  module.displayActions2e.push(dialog);
+  game.modules.get(moduleId).displayActions2e.push(dialog);
 }
 
 export function handleSendToChat(data) {

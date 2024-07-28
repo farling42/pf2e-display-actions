@@ -28,3 +28,5 @@
 #### 1.12.0
 - convert to work on Foundry V12
 - switch from TS to JS, to make the module a lot smaller
+#### 1.12.1
+- Add option to automatically update window at the start of the Actor's turn (when the PC normally gets its new allocation of actions).
