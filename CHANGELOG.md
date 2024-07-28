@@ -25,3 +25,6 @@
 - fixed [#15](https://github.com/MoonIsFalling/pf2e-display-actions/issues/15)
 #### v 1.11.0
 - added support for v11 of Foundry
+#### 1.12.0
+- convert to work on Foundry V12
+- switch from TS to JS, to make the module a lot smaller
