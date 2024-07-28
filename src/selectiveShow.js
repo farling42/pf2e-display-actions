@@ -1,7 +1,7 @@
 /* original by FVTT-SelectiveShow */
 
-import {moduleId, socketEvent} from './constants.js';
-import {handleSendToChat} from './utils.js';
+import { moduleId, socketEvent } from './constants.js';
+import { handleSendToChat } from './utils.js';
 
 export class SelectiveShowApp extends FormApplication {
   #userNameList;
@@ -113,13 +113,13 @@ export class SelectiveShowApp extends FormApplication {
         this.#userNameList.push(activeUserId);
       }
     }
-    return new Promise<unknown>(() => {});
+    return new Promise < unknown > (() => { });
   }
 
   _handleShowPlayers(state) {
     switch (game.settings.get(moduleId, 'DisplayActions2e.Settings.ShowPlayerId')) {
       case 'Normal':
-        this.render(true);
+        this.render(true, { focus: false });
         break;
       case 'Chat':
         handleSendToChat({

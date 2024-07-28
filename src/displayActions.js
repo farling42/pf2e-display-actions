@@ -1,6 +1,6 @@
-import {moduleId, socketEvent} from './constants.js';
-import {actionsFromConditions, handleDuplication, handleToken} from './utils.js';
-import {SelectiveShowApp} from './selectiveShow.js';
+import { moduleId, socketEvent } from './constants.js';
+import { actionsFromConditions, handleDuplication, handleToken } from './utils.js';
+import { SelectiveShowApp } from './selectiveShow.js';
 
 let hookset = false;
 
@@ -14,8 +14,8 @@ export class DisplayActions2e extends Application {
   state = {
     numOfActions: this.defaultNumOfActions,
     numOfReactions: this.defaultNumOfReactions,
-    classNameListActions: Array.from({length: this.defaultNumOfActions}, () => 'symbol'),
-    classNameListReactions: Array.from({length: this.defaultNumOfReactions}, () => 'symbol'),
+    classNameListActions: Array.from({ length: this.defaultNumOfActions }, () => 'symbol'),
+    classNameListReactions: Array.from({ length: this.defaultNumOfReactions }, () => 'symbol'),
     sentFromUserId: String(game.userId),
     userListPermissions: [String(game.userId)],
     actorUuid: undefined,
@@ -84,12 +84,12 @@ export class DisplayActions2e extends Application {
       numOfReactions: this.state.numOfReactions,
       actionImagePayload: this.buildHandlebarPayload(
         this.state.numOfActions,
-        {actionImage: this.actionImage},
+        { actionImage: this.actionImage },
         this.state.classNameListActions,
       ),
       reactionImagePayload: this.buildHandlebarPayload(
         this.state.numOfReactions,
-        {reactionImage: this.reactionImage},
+        { reactionImage: this.reactionImage },
         this.state.classNameListReactions,
       ),
       isLinkedToActor: !!this.state.actorUuid,
@@ -140,7 +140,7 @@ export class DisplayActions2e extends Application {
   buildHandlebarPayload(iterator, imageObj, state) {
     let payload = [];
     for (let index = 0; index < iterator; index++) {
-      payload.push(foundry.utils.mergeObject({number: index, cssClass: state[index]}, imageObj));
+      payload.push(foundry.utils.mergeObject({ number: index, cssClass: state[index] }, imageObj));
     }
     return payload;
   }
@@ -161,7 +161,7 @@ export class DisplayActions2e extends Application {
           default:
             console.error(`${moduleId} incorrectly handled number of actions!`);
         }
-        this.render();
+        this.render(false, { focus: false });
         this.emitUpdate();
       }
     }
@@ -201,7 +201,7 @@ export class DisplayActions2e extends Application {
     // case to few state elements
     if (this.state.classNameListActions.length < this.state.numOfActions) {
       const tmp = Array.from(
-        {length: this.state.numOfActions - this.state.classNameListActions.length},
+        { length: this.state.numOfActions - this.state.classNameListActions.length },
         () => 'symbol',
       );
       this.state.classNameListActions = this.state.classNameListActions.concat(tmp);
@@ -217,7 +217,7 @@ export class DisplayActions2e extends Application {
     // case to few state elements
     if (this.state.classNameListReactions.length < this.state.numOfReactions) {
       const tmp = Array.from(
-        {length: this.state.numOfReactions - this.state.classNameListReactions.length},
+        { length: this.state.numOfReactions - this.state.classNameListReactions.length },
         () => 'symbol',
       );
       this.state.classNameListReactions = this.state.classNameListReactions.concat(tmp);
@@ -264,7 +264,7 @@ export class DisplayActions2e extends Application {
 
   #_onButtonClickUpdateActors() {
     this.state = this.generateActionsFromConditions(this.state);
-    this.render();
+    this.render(false, { focus: false });
   }
 
   #_onHeaderDuplication() {
@@ -303,7 +303,7 @@ function startTurnUpdate(combatant, encounter, userId) {
 
   if (app) {
     app.state = app.generateActionsFromConditions(app.state);
-    app.render();
+    app.render(false, { focus: false });
   }
 }
 

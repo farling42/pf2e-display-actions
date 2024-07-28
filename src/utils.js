@@ -3,13 +3,13 @@ import { condtionModifierTable, moduleId } from './constants.js';
 
 export function handleShowToAll(data) {
   const dialog = checkAndBuildApp(data);
-  dialog.render(true, { id: dialog.appId });
+  dialog.render(true, { id: dialog.appId, focus: false });
 }
 
 export function handleShowToSelection(data) {
   if (data.userList?.includes(String(game.userId))) {
     const dialog = checkAndBuildApp(data);
-    dialog.render(true, { id: dialog.appId });
+    dialog.render(true, { id: dialog.appId, focus: false });
   }
 }
 
@@ -26,14 +26,14 @@ export function handleUpdate(data) {
   module.displayActions2e.forEach(app => {
     if (app.state.actorUuid === data.state.actorUuid) {
       app.setState(data.state);
-      app.render(true);
+      app.render(true, { focus: false });
     }
   });
 }
 
 export function handleToken(data) {
   const dialog = checkAndBuildApp(data);
-  dialog.render(true, { id: dialog.appId });
+  dialog.render(true, { id: dialog.appId, focus: false });
 }
 
 export function handleDuplication(data) {
@@ -51,21 +51,19 @@ export function handleDuplication(data) {
   );
 
   const dialog = new DisplayActions2e(newState);
-  dialog.render(true, { id: dialog.appId });
+  dialog.render(true, { id: dialog.appId, focus: false });
   // push into list to wait for updates
   game.modules.get(moduleId).displayActions2e.push(dialog);
 }
 
 export function handleSendToChat(data) {
   const app = checkForApp(data);
-  if (app) {
-    if (app.rendered) {
-      // find the actions html, then wrap it to create "outerHtml"
-      const msg = app.element.find('.window-content').find('.flexbox-actions').wrapAll('<div>').parent();
-      ChatMessage.create({
-        content: msg.html(),
-      });
-    }
+  if (app?.rendered) {
+    // find the actions html, then wrap it to create "outerHtml"
+    const msg = app.element.find('.window-content').find('.flexbox-actions').wrapAll('<div>').parent();
+    ChatMessage.create({
+      content: msg.html(),
+    });
   }
 }
 

@@ -1,7 +1,7 @@
-import {moduleId, socketEvent} from './constants.js';
-import {handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate} from './utils.js';
-import {DisplayActions2e} from './displayActions.js';
-import {settingSetup} from './settings.js';
+import { moduleId, socketEvent } from './constants.js';
+import { handleShowToAll, handleShowToSelection, handleShowWithPermission, handleUpdate } from './utils.js';
+import { DisplayActions2e } from './displayActions.js';
+import { settingSetup } from './settings.js';
 
 let homeDisplayActions;
 
@@ -22,8 +22,8 @@ Hooks.on('getSceneControlButtons', (hudButtons) => {
     button: true,
     visible: true,
     onClick: async () => {
-      homeDisplayActions.render(true);
-      game.socket?.emit('module.DisplayActions2e', {event: 'DisplayActions2e'});
+      homeDisplayActions.render(true, { focus: false });
+      game.socket?.emit('module.DisplayActions2e', { event: 'DisplayActions2e' });
     },
   };
 
