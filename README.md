@@ -1,11 +1,14 @@
+[![ko-fi](https://img.shields.io/badge/Ko--Fi-farling-success)](https://ko-fi.com/farling)
+[![patreon](https://img.shields.io/badge/Patreon-amusingtime-success)](https://patreon.com/amusingtime)
+[![paypal](https://img.shields.io/badge/Paypal-farling-success)](https://paypal.me/farling)
+![GitHub License](https://img.shields.io/github/license/farling42/pf2e-display-actions)
+![Foundry Info](https://img.shields.io/badge/Foundry-v11-informational)
+![Latest Release Download Count](https://img.shields.io/github/downloads/farling42/pf2e-display-actions/latest/module.zip)
+![Forge installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fpdf-pager)
+
 # Pf2e Display Actions
 
-![GitHub Releases](https://img.shields.io/badge/dynamic/json?label=Downloads@latest&query=assets%5B1%5D.download_count&url=https%3A%2F%2Fapi.github.com%2Frepos%2FMoonIsFalling%2Fpf2e-display-actions%2Freleases%2Flatest)
-![GitHub All Releases](https://img.shields.io/github/downloads/MoonIsFalling/pf2e-display-actions/total?label=Downloads+total)
-
 Displays Pathfinder2e action and reaction buttons.
-
-This module supports [Bug Reporter](https://github.com/League-of-Foundry-Developers/bug-reporter).
 
 ## Usage
 
@@ -32,7 +35,7 @@ Currently WIP I may have missed many interactions.
 - better titles
 
 ## Credits
-- I used BringingFire's [Blog](https://bringingfire.com/blog/intro-to-foundry-module-development) and respective [template](https://github.com/BringingFire/foundry-module-ts-template)
+- The old TS version used BringingFire's [Blog](https://bringingfire.com/blog/intro-to-foundry-module-development) and respective [template](https://github.com/BringingFire/foundry-module-ts-template)
 
 - Module [FVTT-SelectiveShow](https://github.com/moo-man/FVTT-SelectiveShow) under is of the MIT License
 
