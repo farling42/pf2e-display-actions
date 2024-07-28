@@ -28,10 +28,7 @@ export class SelectiveShowApp extends FormApplication {
 
   async getData() {
     const data = await super.getData();
-    // 👇️ ts-ignore ignores any ts errors on the next line
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    data.users = game.users.filter(user => user.active && user.id != game.user.id);
+    data.users = game.users.filter(user => user.active && user.id !== game.userId);
     return data;
   }
 
@@ -96,15 +93,7 @@ export class SelectiveShowApp extends FormApplication {
     const selector = Array.from(
       document.getElementsByClassName('selective-show-form')[0].children[0].children[0].children[0].children,
     );
-    this.#userNameList = selector.map((element) => {
-      // 👇️ ts-ignore ignores any ts errors on the next line
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (element.selected) {
-        return element.value;
-      }
-      return '';
-    });
+    this.#userNameList = selector.map((element) => element.selected ? element.value : "" );
 
     // active User Id needs to be send always
     const activeUserId = game.userId;
@@ -113,7 +102,6 @@ export class SelectiveShowApp extends FormApplication {
         this.#userNameList.push(activeUserId);
       }
     }
-    return new Promise < unknown > (() => { });
   }
 
   _handleShowPlayers(state) {

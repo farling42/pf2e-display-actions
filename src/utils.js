@@ -2,14 +2,14 @@ import { DisplayActions2e } from './displayActions.js';
 import { condtionModifierTable, moduleId } from './constants.js';
 
 export function handleShowToAll(data) {
-  const dialog = checkAndBuildApp(data);
-  dialog.render(true, { id: dialog.appId, focus: false });
+  const app = checkAndBuildApp(data);
+  app.render(true, { id: `DisplayActions2e${data.user}`, focus: false });
 }
 
 export function handleShowToSelection(data) {
-  if (data.userList?.includes(String(game.userId))) {
-    const dialog = checkAndBuildApp(data);
-    dialog.render(true, { id: dialog.appId, focus: false });
+  if (data.userList?.includes(game.userId)) {
+    const app = checkAndBuildApp(data);
+    app.render(true, { id: `DisplayActions2e${data.user}`, focus: false });
   }
 }
 
@@ -21,19 +21,21 @@ export function handleUpdate(data) {
   // Not an actor-specific update, so ignore it
   if (!data.state.actorUuid) return;
 
+  // There might be more than one, so don't use checkForApp
   const module = game.modules.get(moduleId);
+  for (const app of module.displayActions2e.filter(app => app.getState().actorUuid === data.state.actorUuid)) {
 
-  module.displayActions2e.forEach(app => {
-    if (app.state.actorUuid === data.state.actorUuid) {
-      app.setState(data.state);
-      app.render(true, { focus: false });
-    }
-  });
+    // On a simple update, don't modify the sentFromUserId field
+    data.state.sentFromUserId = app.state.sentFromUserId;
+
+    app.setState(data.state);
+    app.render(true, { focus: false });
+  }
 }
 
 export function handleToken(data) {
-  const dialog = checkAndBuildApp(data);
-  dialog.render(true, { id: dialog.appId, focus: false });
+  const app = checkAndBuildApp(data);
+  app.render(true, { id: `DisplayActions2e${data.user}`, focus: false });
 }
 
 export function handleDuplication(data) {
@@ -50,10 +52,10 @@ export function handleDuplication(data) {
     })
   );
 
-  const dialog = new DisplayActions2e(newState);
-  dialog.render(true, { id: dialog.appId, focus: false });
+  const app = new DisplayActions2e(newState);
+  app.render(true, { id: `DisplayActions2e${data.user}${newState.duplicationNr}`, focus: false });
   // push into list to wait for updates
-  game.modules.get(moduleId).displayActions2e.push(dialog);
+  game.modules.get(moduleId).displayActions2e.push(app);
 }
 
 export function handleSendToChat(data) {
@@ -72,12 +74,12 @@ export function handleSendToChat(data) {
  * @param data data from emit
  * @returns either found DisplayActions2e or undefined
  */
-function checkForApp(data) {
+function checkForApp(data, ignoreUser = false) {
   const module = game.modules.get(moduleId);
 
   const app = module.displayActions2e.find(app => {
     const appState = app.getState();
-    return appState.sentFromUserId === data.state.sentFromUserId &&
+    return (ignoreUser || appState.sentFromUserId === data.state.sentFromUserId) &&
       appState.duplicationNr.almostEqual(data.state.duplicationNr) &&
       appState.actorUuid === data.state.actorUuid;
   });

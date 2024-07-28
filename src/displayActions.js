@@ -16,8 +16,8 @@ export class DisplayActions2e extends Application {
     numOfReactions: this.defaultNumOfReactions,
     classNameListActions: Array.from({ length: this.defaultNumOfActions }, () => 'symbol'),
     classNameListReactions: Array.from({ length: this.defaultNumOfReactions }, () => 'symbol'),
-    sentFromUserId: String(game.userId),
-    userListPermissions: [String(game.userId)],
+    sentFromUserId: game.userId,
+    userListPermissions: [game.userId],
     actorUuid: undefined,
     duplicationNr: 0,
   };
@@ -47,9 +47,7 @@ export class DisplayActions2e extends Application {
     }
 
     if (this.state.sentFromUserId !== game.userId) {
-      const name = game.users?.find((user) => {
-        return user.id === this.state.sentFromUserId;
-      })?.name;
+      const name = game.users.get(this.state.sentFromUserId)?.name;
       title += ` sent from ${name}`;
     }
 
@@ -57,12 +55,6 @@ export class DisplayActions2e extends Application {
       title += ` (${this.state.duplicationNr})`;
     }
     return title;
-  }
-
-  get appId() {
-    let result = 'DisplayActions2e';
-    if (data.actorId) result += `${actorId}`;
-    if (newState.duplicationNr) result += `-${newState.duplicationNr}`;
   }
 
   static get defaultOptions() {
@@ -100,7 +92,7 @@ export class DisplayActions2e extends Application {
   activateListeners(html) {
     super.activateListeners(html);
     // register events for all users with permission
-    if (this.state.userListPermissions.includes(String(game.userId))) {
+    if (this.state.userListPermissions.includes(game.userId)) {
       html.find('img.symbol').on('click', this._onClickSymbolImage.bind(this));
       html.find('input.input-counter').on('change', this._onChangeCountNumber.bind(this));
       html.find('button.actorLink').on('click', this.#_onButtonClickSelectedActors.bind(this));
@@ -304,6 +296,7 @@ function startTurnUpdate(combatant, encounter, userId) {
   if (app) {
     app.state = app.generateActionsFromConditions(app.state);
     app.render(false, { focus: false });
+    app.emitUpdate();
   }
 }
 
